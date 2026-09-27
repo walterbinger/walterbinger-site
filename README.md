@@ -2,7 +2,7 @@
 
 <img src="./walter-hero.jpg" alt="Walter Binger" width="190" align="right">
 
-**Professional portfolio, operating-system experiment, and explorable map of projects, work, writing, and ideas.**
+**Professional portfolio and explorable map of projects, work, writing, and ideas.**
 
 **Live site:** https://walterbinger.com
 
@@ -64,7 +64,7 @@ Default local URL: `http://127.0.0.1:5173/`
 
 ## Publishing
 
-GitHub Pages publishes the Vite `dist/` artifact from `main` through `.github/workflows/deploy.yml`. The production artifact includes the custom-domain declaration for `walterbinger.com`.
+GitHub Pages publishes the complete `homepage/` artifact from `main` through `.github/workflows/deploy.yml`. The approved professional homepage stays at the root, while the Vite build writes the Living Map into `homepage/universe/`; the published artifact also carries the custom-domain declaration for `walterbinger.com`.
 
 Historical construction and design records remain in Git history and under `docs/`; they are supporting context, not the recruiter-facing entry point.
 
