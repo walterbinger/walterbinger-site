@@ -1,5 +1,7 @@
 # WalterBinger.com
 
+<img src="./walter-hero.jpg" alt="Walter Binger" width="190" align="right">
+
 **Professional portfolio, operating-system experiment, and explorable map of projects, work, writing, and ideas.**
 
 **Live site:** https://walterbinger.com
@@ -35,7 +37,7 @@ This repository is not intended to present me as a traditional software engineer
 - `src/` — Living Map application, domain logic, state, components, and data
 - `homepage/` — professional front-door source
 - `content/` — authored portfolio / project material
-- `docs/` — construction notes and design records
+- `docs/` — historical construction notes, verification records, and design context
 - `tests/` — end-to-end browser verification
 - `.github/workflows/` — automated Pages deployment
 
@@ -64,7 +66,7 @@ Default local URL: `http://127.0.0.1:5173/`
 
 GitHub Pages publishes the Vite `dist/` artifact from `main` through `.github/workflows/deploy.yml`. The production artifact includes the custom-domain declaration for `walterbinger.com`.
 
-Historical cosmology prototypes are preserved on the `cosmology-wip` branch. Current construction notes and visual records live under `docs/`.
+Historical construction and design records remain in Git history and under `docs/`; they are supporting context, not the recruiter-facing entry point.
 
 ---
 
