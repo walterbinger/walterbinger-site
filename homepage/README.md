@@ -1,20 +1,28 @@
-# WalterBinger.com
+# WalterBinger.com — Production Homepage
 
-Practical placeholder for Walter Binger's professional site — built so LinkedIn and resumes have somewhere real to point while the full site is developed.
+This directory contains the approved professional front door for WalterBinger.com and is the artifact published by GitHub Pages.
 
-## Files
+## Production boundary
 
-- `index.html` — site content: name, bio, four proof highlights, contact.
-- `styles.css` — warm paper / black ink visual system (Fraunces + Work Sans).
-- `script.js` — copy-to-clipboard on the contact email.
-- `CNAME` — points GitHub Pages to `walterbinger.com`.
+- `homepage/index.html` is the approved professional homepage and remains the primary portfolio entrance.
+- The Living Map is built beneath it at `/universe/`.
+- The Vite source for the Living Map remains in the repository root under `src/`; the production build writes into `homepage/universe/`.
+- The homepage must not be replaced by the experimental application.
 
-## The real project
+## Key files
 
-The full interactive build — a sparse star field where attention reveals flash-tattoo-style drawings, lens-based constellations, and navigable worlds — lives on the `cosmology-wip` branch, exactly as Codex left it, along with its full design canon (`docs/`), source archive (`archive/`), and prototype history (`drafts/`).
-
-That build is intentionally not deployed yet: its own game plan marks the site-build phase as not started, pending an approved symbol registry and homepage blueprint. Resume work there from `cosmology-wip`; don't merge it into `main` until it's ready to replace this placeholder outright.
+- `index.html` — professional homepage
+- `styles.css` — homepage styles
+- `script.js` — small homepage interactions
+- `Walter-Binger-CV-2026.pdf` — public full CV
+- `Walter-Binger-Operations-Resume.pdf` — operations résumé
+- `Walter-Binger-Implementation-Resume.pdf` — implementation résumé
+- `Walter-Binger-CustomerSuccess-Resume.pdf` — client-delivery résumé
+- `walter-hero.jpg` / `walter-portrait.jpg` — public portrait assets
+- `robots.txt`, `sitemap.xml`, `CNAME` — discovery and custom-domain configuration
 
 ## Publishing
 
-Deployed via GitHub Pages from `main`, repository root, custom domain `walterbinger.com`.
+A push to `main` runs `.github/workflows/deploy.yml`, which installs dependencies, builds the Living Map into `homepage/universe/`, and publishes the complete `homepage/` artifact to GitHub Pages.
+
+The canonical live site is https://walterbinger.com.
