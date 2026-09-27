@@ -1,38 +1,76 @@
 # WalterBinger.com
 
-Walter Binger's professional site and living map.
+**Professional portfolio, operating-system experiment, and explorable map of projects, work, writing, and ideas.**
 
-The public front door is a restrained professional profile. Its constellation
-mark opens a relative, lens-driven map of projects, places, writing, tools, and
-artifacts. The architecture is durable; the exhibition is intended to grow.
+**Live site:** https://walterbinger.com
 
-## Local Development
+WalterBinger.com started as a conventional professional site and evolved into a more ambitious question: **can a portfolio show how someone thinks, connects systems, and works across disciplines—not just list where they have worked?**
+
+The public homepage remains the professional front door. Beneath it, the Living Map turns projects, places, writing, tools, and source material into an explorable field rather than a stack of portfolio cards.
+
+## What this project demonstrates
+
+- **Systems thinking:** translating a large body of work into a navigable information architecture.
+- **Product and operations judgment:** defining states, rules, handoffs, constraints, and acceptance criteria instead of treating the site as decoration.
+- **AI-assisted building:** using Codex, Claude, ChatGPT, and other tools as implementation collaborators while keeping human direction, source control, review, and verification explicit.
+- **Iterative delivery:** preserving a stable professional homepage while developing more experimental interaction underneath it.
+- **Quality discipline:** automated domain/state tests, Playwright end-to-end coverage, production builds, and GitHub Pages deployment.
+
+This repository is not intended to present me as a traditional software engineer. It is evidence of how I use technology, AI, documentation, testing, and structured iteration to turn ambiguous ideas into working systems.
+
+## Current stack
+
+- React 19 + TypeScript
+- Vite
+- Three.js + d3-force-3d
+- Zustand + Zod
+- Motion
+- Vitest
+- Playwright
+- GitHub Actions + GitHub Pages
+- Custom domain: `walterbinger.com`
+
+## Project structure
+
+- `src/` — Living Map application, domain logic, state, components, and data
+- `homepage/` — professional front-door source
+- `content/` — authored portfolio / project material
+- `docs/` — construction notes and design records
+- `tests/` — end-to-end browser verification
+- `.github/workflows/` — automated Pages deployment
+
+The architecture deliberately separates the **professional entrance** from the more experimental **Living Map**, so the portfolio can stay useful while the deeper system continues to evolve.
+
+## Verification
+
+```bash
+pnpm install
+pnpm run check
+pnpm run test:e2e
+```
+
+`pnpm run check` runs the project tests and production build. The Playwright suite covers the professional doorway, PREP resources, lens behavior, world travel, Gratitude convergence, and the Snow Globe on desktop and mobile.
+
+## Local development
 
 ```bash
 pnpm install
 pnpm run dev
 ```
 
-The default local URL is `http://127.0.0.1:5173/`. The Codex working preview
-uses port `8765`.
-
-## Verification
-
-```bash
-pnpm run check
-pnpm run test:e2e
-```
-
-`check` runs the domain/state tests and the production build. The Playwright
-suite covers the professional doorway, PREP resources, lens behavior, world
-travel, Gratitude convergence, and the Snow Globe on desktop and mobile.
+Default local URL: `http://127.0.0.1:5173/`
 
 ## Publishing
 
-GitHub Pages publishes the Vite `dist/` artifact from `main` through
-`.github/workflows/deploy.yml`. The production artifact includes the custom
-domain declaration for `walterbinger.com`.
+GitHub Pages publishes the Vite `dist/` artifact from `main` through `.github/workflows/deploy.yml`. The production artifact includes the custom-domain declaration for `walterbinger.com`.
 
-Current construction notes and visual records live in
-`docs/foundation-v0.1/`. Historical cosmology prototypes are preserved on the
-`cosmology-wip` branch.
+Historical cosmology prototypes are preserved on the `cosmology-wip` branch. Current construction notes and visual records live under `docs/`.
+
+---
+
+### About me
+
+I am an operations and implementation leader whose career has crossed healthcare, hospitality, entrepreneurship, training, client delivery, and increasingly AI-enabled systems work. The common thread is turning messy human processes into structures people can actually use.
+
+**Portfolio:** https://walterbinger.com  
+**LinkedIn:** https://www.linkedin.com/in/walter-binger-032bb423b/
