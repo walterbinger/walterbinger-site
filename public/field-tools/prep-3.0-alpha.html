@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PREP 3.0 Alpha RC2 — Level 1 Field Card</title>
+<style>
+:root{
+  --navy:#061a33;
+  --navy2:#0b2b51;
+  --teal:#0b6471;
+  --teal2:#118596;
+  --line:#a8bfd0;
+  --paper:#f8fbfc;
+  --ink:#0c2940;
+  --muted:#5f7383;
+  --lime:#d7ef1f;
+  --lime2:#b9d512;
+  --white:#fff;
+  --shadow:0 14px 36px rgba(5,25,48,.14);
+  --radius:13px;
+}
+*{box-sizing:border-box}
+html{background:#e7eef2}
+body{
+  margin:0;
+  padding:18px;
+  font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--ink);
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+.card{
+  max-width:1440px;margin:0 auto;background:var(--paper);border:1px solid #7597ad;
+  border-radius:13px;box-shadow:var(--shadow);overflow:hidden;
+}
+.top{
+  background:linear-gradient(90deg,var(--navy),#082642 52%,var(--navy));
+  color:white;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding:12px 20px;
+}
+.brand{display:flex;align-items:center;gap:13px;font-size:27px;font-weight:950;letter-spacing:-.02em}
+.logo{width:48px;height:48px;border:4px solid #0ed1e2;clip-path:polygon(50% 0,92% 23%,92% 75%,50% 100%,8% 75%,8% 23%);display:grid;place-items:center;font-size:27px;font-family:Georgia,serif}
+.title{font-size:42px;font-weight:1000;letter-spacing:.01em}
+.laminate{justify-self:end;color:#e7f32c;font-size:18px;font-weight:950}
+.mantra{
+  text-align:center;font-size:27px;font-weight:900;font-style:italic;color:#095263;background:white;padding:8px 12px;
+}
+.meta{display:grid;grid-template-columns:1.15fr .85fr .85fr 1.15fr;gap:10px;padding:0 16px 10px;background:white}
+.meta .field{border:1px solid #83aac0;border-radius:9px;padding:9px 12px;display:flex;align-items:center;gap:9px;min-height:49px}
+.field b{white-space:nowrap}.field input{border:0;border-bottom:1px solid #7896a8;background:transparent;min-width:0;width:100%;outline:none;color:var(--ink);font-weight:700}
+.grid{display:grid;grid-template-columns:26% 40% 34%;gap:12px;padding:0 16px 14px;background:white}
+.stack{display:grid;gap:12px;align-content:start}
+.panel{border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;background:white}
+.panel h3{margin:0;padding:9px 13px;color:white;background:linear-gradient(90deg,var(--navy2),var(--navy));font-size:16px;letter-spacing:.01em}
+.panel h3.teal{background:linear-gradient(90deg,#075968,#0b7280)}
+.pad{padding:13px}
+.objectives{display:grid;gap:11px}
+.obj{display:flex;gap:10px;align-items:flex-start;font-weight:760}
+.checkicon{width:24px;height:24px;border-radius:50%;background:#0f6571;color:white;display:grid;place-items:center;flex:0 0 auto;font-weight:1000}
+.coreline{border-top:1px solid #a5bac8;margin-top:10px;padding-top:10px;display:flex;gap:9px;color:#0b5060}
+.star{font-size:24px}
+.textarea, textarea, .obs-input{
+  width:100%;border:0;border-bottom:1px solid #89a5b5;background:transparent;padding:6px 2px;outline:none;resize:vertical;color:var(--ink)
+}
+textarea{min-height:48px}
+.label{font-weight:850;margin:4px 0}
+.signal-wrap{padding:10px 10px 5px}
+.signal-map{position:relative;min-height:450px}
+.core{
+  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:160px;min-height:140px;
+  border:3px solid var(--navy);border-radius:16px;background:#fbffff;display:grid;place-items:center;text-align:center;padding:13px;z-index:3;
+}
+.core b{font-size:18px}.core small{display:block;color:var(--muted);font-weight:700}.core textarea{min-height:55px;text-align:center;font-weight:760}
+.node{
+  position:absolute;width:142px;min-height:88px;border:1.5px solid #86b5ca;border-radius:13px;background:white;
+  padding:9px;text-align:center;box-shadow:0 3px 10px rgba(11,59,86,.06);transition:.15s;
+}
+.node:hover{border-color:var(--teal2);box-shadow:0 6px 14px rgba(11,59,86,.12);background:#f7fdff}
+.node.active{border:3px solid var(--teal2);background:#edfafd}
+.node b{font-size:14px}.node small{display:block;color:#46687b;margin-top:3px;font-weight:650}
+.node .icon{font-size:26px}
+.node button{border:0;background:transparent;color:inherit;width:100%;padding:0}
+.n-actor{left:50%;top:0;transform:translateX(-50%)}
+.n-tools{left:3%;top:18%}
+.n-timing{right:3%;top:18%}
+.n-comm{left:0;top:47%}
+.n-env{right:0;top:47%}
+.n-cap{left:8%;bottom:3%}
+.n-rhythm{right:8%;bottom:3%}
+.n-routing{left:50%;bottom:-2%;transform:translateX(-50%)}
+.ring{position:absolute;left:50%;top:49%;width:72%;height:68%;transform:translate(-50%,-50%);border:3px dashed #d8e7ee;border-radius:50%}
+.primary{margin:4px 10px 10px;border:1px solid #b0c9d7;border-radius:8px;padding:8px 11px;background:#f2fafc;font-size:13px}
+.primary b{color:#0a5261}
+.map-note{margin:0 10px 10px;border-left:4px solid var(--lime2);background:#f7fbdf;padding:8px 10px;font-size:12px;color:#315565;border-radius:7px}
+.moves{display:grid;grid-template-columns:1fr 1fr;gap:6px 18px;font-size:13px}
+.moves label{display:flex;align-items:center;gap:8px}
+.bottom-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px 15px;margin-top:10px}
+.bottom-fields .wide{grid-column:1/-1}
+.watch{padding:0}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th,td{border:1px solid #9cb7c8;padding:5px;vertical-align:top}
+th{background:#082c52;color:white;font-weight:900;text-align:center}
+td input,td textarea,td select{width:100%;border:0;background:transparent;outline:none;color:var(--ink);font-size:12px}
+td textarea{min-height:42px}
+.claim-grid{display:grid;grid-template-columns:1fr 1fr}
+.claim-grid label{border:1px solid #b9cbd6;border-width:0 1px 1px 0;padding:10px;display:flex;gap:8px;align-items:center;font-weight:750;font-size:13px}
+.win-fields{padding:10px 12px;display:grid;gap:8px}
+.footer{display:grid;grid-template-columns:32% 68%;background:var(--navy);color:white;min-height:95px}
+.unlock{background:linear-gradient(105deg,var(--lime),#c7e414 80%,transparent 81%);color:var(--navy);padding:15px 24px;display:flex;align-items:center;gap:16px;font-weight:850}
+.lock{width:51px;height:51px;border-radius:50%;background:#0e3056;color:#e8f620;display:grid;place-items:center;font-size:27px;flex:0 0 auto}
+.unlock b{font-size:18px}.next{padding:15px 24px;display:grid;align-content:center;gap:6px}
+.next-line{display:flex;gap:17px;align-items:center;flex-wrap:wrap}.next-line b{font-size:19px}
+.next span{color:#dbea27}
+.status{font-size:13px;color:#dbe9ee}
+.actionbar{max-width:1440px;margin:12px auto 0;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.actionbar button{border:0;border-radius:999px;padding:9px 14px;font-weight:850}
+.actionbar .primarybtn{background:var(--navy);color:white}
+.actionbar .lightbtn{background:white;color:var(--ink);border:1px solid #9bb5c5}
+.level2{
+  max-width:1440px;margin:15px auto 0;background:#07192b;color:white;border-radius:13px;border:1px solid #31506c;box-shadow:var(--shadow);display:none;overflow:hidden
+}
+.level2.show{display:block}
+.level2-head{padding:14px 18px;background:linear-gradient(90deg,#07192b,#0b3047);display:flex;justify-content:space-between;align-items:center;gap:12px}
+.level2-head h2{margin:0;font-size:25px}.level2-head small{color:#acdbe0}
+.const-copy{padding:14px 18px;background:#0b2237;color:#cfdee7}
+@media(max-width:1080px){
+  body{padding:8px}.top{grid-template-columns:1fr}.title{font-size:30px}.laminate{justify-self:start}.grid{grid-template-columns:1fr}
+  .meta{grid-template-columns:1fr 1fr}.signal-map{min-height:500px}
+}
+@media(max-width:650px){
+  .meta{grid-template-columns:1fr}.signal-map{min-height:650px}.node{width:120px}.moves{grid-template-columns:1fr}
+  .footer{grid-template-columns:1fr}.unlock{clip-path:none}.claim-grid{grid-template-columns:1fr}
+}
+@page{size:letter landscape;margin:.22in}
+@media print{
+  html,body{background:#fff!important}
+  body{padding:0!important;font-size:10px;zoom:.88;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .actionbar,.level2{display:none!important}
+  .card{max-width:none;width:100%;box-shadow:none;border-radius:0;border:1px solid #36566b}
+  .top{grid-template-columns:1fr auto 1fr;padding:7px 11px}.brand{font-size:18px}.logo{width:34px;height:34px;font-size:20px;border-width:3px}.title{font-size:26px}.laminate{font-size:12px}
+  .mantra{font-size:15px;padding:3px 7px}.meta{grid-template-columns:1.15fr .85fr .85fr 1.15fr;gap:5px;padding:0 8px 6px}.meta .field{min-height:30px;padding:4px 6px;font-size:9px}
+  .grid{grid-template-columns:26% 40% 34%;gap:6px;padding:0 8px 7px}.stack{gap:6px}.panel{break-inside:avoid;border-radius:7px}
+  .panel h3{padding:4px 7px;font-size:11px}.pad{padding:5px}.objectives{gap:3px}.checkicon{width:17px;height:17px}
+  textarea{min-height:26px}.signal-wrap{padding:5px}.signal-map{min-height:300px}.core{width:110px;min-height:88px;padding:5px}
+  .core b{font-size:13px}.core textarea{min-height:40px}.node{width:96px;min-height:54px;padding:3px;border-radius:7px}.node .icon{font-size:16px}.node b{font-size:10px}.node small{font-size:8px}
+  .primary,.map-note{margin:2px 4px 4px;padding:4px 6px;font-size:8px;line-height:1.15}.moves{font-size:9px;gap:3px 8px}.bottom-fields{gap:4px 7px}
+  table{font-size:8px}th,td{padding:3px}td textarea{min-height:22px}.claim-grid label{padding:5px;font-size:9px}.win-fields{padding:5px 7px;gap:4px}
+  .footer{min-height:52px}.unlock,.next{padding:7px 11px}.lock{width:34px;height:34px;font-size:18px}.unlock b,.next-line b{font-size:12px}.status{font-size:9px}
+}
+</style>
+</head>
+<body>
+<section class="card">
+  <div class="top">
+    <div class="brand"><div class="logo">P</div><span>PREP 3.0 ALPHA <small style="font-size:12px;color:#9ed6de;letter-spacing:.08em">RC2</small></span></div>
+    <div class="title">LEVEL 1 FIELD CARD</div>
+    <div class="laminate">▣ PRINT / LAMINATE / CLIPBOARD</div>
+  </div>
+  <div class="mantra">★ &nbsp; One Problem. One Round. One Win. &nbsp; ★<div style="font-size:10px;font-style:normal;font-weight:850;letter-spacing:.06em;color:#66818f;margin-top:2px">ALPHA · FIELD VALIDATION IN PROGRESS · OBSERVE CONDITIONS, NOT CHARACTER</div></div>
+
+  <div class="meta">
+    <div class="field"><b>👥 Facility / Team:</b><input id="team"></div>
+    <div class="field"><b>📅 Date:</b><input id="date" type="date"></div>
+    <div class="field"><b>● Round #:</b><input id="round" value="1"></div>
+    <div class="field"><b>👤 PREP Lead:</b><input id="lead"></div>
+  </div>
+
+  <div class="grid">
+    <div class="stack">
+      <div class="panel">
+        <h3>◎ LEVEL 1 OBJECTIVE</h3>
+        <div class="pad objectives">
+          <div class="obj"><span class="checkicon">✓</span><span>Do not fix the whole building today.</span></div>
+          <div class="obj"><span class="checkicon">✓</span><span>Find one repeated frustration.</span></div>
+          <div class="obj"><span class="checkicon">✓</span><span>Test one small local move.</span></div>
+          <div class="obj"><span class="checkicon">✓</span><span>Look for one system win.</span></div>
+          <div class="coreline"><span class="star">★</span><div><b>Core line:</b><br><i>Measure integrity, not character.</i></div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="teal">⌕ 1. SPOT THE LOOP</h3>
+        <div class="pad">
+          <div class="label">Recurring issue:</div>
+          <textarea id="issue" placeholder="Describe the repeated issue in observable terms."></textarea>
+          <div class="label">Where / when:</div>
+          <textarea id="where"></textarea>
+          <div class="label">Who / what is affected:</div>
+          <textarea id="affected"></textarea>
+          <div style="margin-top:10px;font-size:12px;color:var(--muted)"><b>3.0 facilitator check:</b> What pressure or strain might be generating the visible symptom?</div>
+          <textarea id="strain" placeholder="Optional — source of strain / hidden pressure"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="panel">
+        <h3 class="teal">◉ 2. MAP THE FIELD — FIELD OF INFLUENCE</h3>
+        <div class="signal-wrap">
+          <div class="signal-map">
+            <div class="ring"></div>
+            <div class="core">
+              <div>
+                <b>CENTER<br>CORE SIGNAL</b>
+                <small>(Recurring issue)</small>
+                <textarea id="coreIssue" placeholder="Issue"></textarea>
+              </div>
+            </div>
+
+            <div class="node n-actor" data-domain="Actor"><button><div class="icon">👥</div><b>ACTOR</b><small>people, roles, teams, dynamics</small></button></div>
+            <div class="node n-tools" data-domain="Tools"><button><div class="icon">🛠</div><b>TOOLS</b><small>systems, tech, equipment</small></button></div>
+            <div class="node n-timing" data-domain="Timing"><button><div class="icon">⏱</div><b>TIMING</b><small>when, how often, pace</small></button></div>
+            <div class="node n-comm" data-domain="Communication"><button><div class="icon">💬</div><b>COMMUNICATION</b><small>handoffs, clarity, feedback</small></button></div>
+            <div class="node n-env" data-domain="Environment"><button><div class="icon">◒</div><b>ENVIRONMENT</b><small>space, flow, conditions</small></button></div>
+            <div class="node n-cap" data-domain="Capacity"><button><div class="icon">▥</div><b>CAPACITY</b><small>load, resources, headroom</small></button></div>
+            <div class="node n-rhythm" data-domain="Rhythm"><button><div class="icon">∿</div><b>RHYTHM</b><small>cadence, consistency</small></button></div>
+            <div class="node n-routing" data-domain="Routing"><button><div class="icon">⌖</div><b>ROUTING</b><small>path, sequence, decisions</small></button></div>
+          </div>
+          <div class="primary">
+            <b>Field lenses lit:</b> <span id="cluster">None selected.</span><br>
+            <span style="color:var(--muted)">Click the field conditions your observations keep pointing toward. These are lenses, not conclusions.</span>
+          </div>
+          <div class="map-note"><b>MAP = Mechanism · Actor · Pattern.</b> Mechanism asks what system condition may be producing the issue; Actor asks which person, role, team, or interaction changes the signal; Pattern asks what repeats across time or context.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 class="teal">✓ 3. MAKE ONE LOCAL MOVE</h3>
+        <div class="pad">
+          <div class="moves">
+            <label><input type="checkbox" class="move"> Add cue</label>
+            <label><input type="checkbox" class="move"> Move tool</label>
+            <label><input type="checkbox" class="move"> Clarify owner</label>
+            <label><input type="checkbox" class="move"> Fix log</label>
+            <label><input type="checkbox" class="move"> Improve handoff</label>
+            <label><input type="checkbox" class="move"> Route correctly</label>
+            <label><input type="checkbox" class="move"> Set par / trigger</label>
+            <label><input type="checkbox" class="move"> Teach the why</label>
+          </div>
+          <div class="bottom-fields">
+            <div class="wide"><b>✎ Local move:</b><input id="localMove" class="textarea"></div>
+            <div><b>👤 Owner:</b><input id="owner" class="textarea"></div>
+            <div><b>📅 Return / due:</b><input id="due" class="textarea"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="panel">
+        <h3>↗ 4. WATCH THE ROUND</h3>
+        <div class="watch">
+          <table>
+            <thead><tr><th>#</th><th>MAP lens</th><th>What happened?</th><th>System taught us</th></tr></thead>
+            <tbody id="obsRows"></tbody>
+          </table>
+          <div style="padding:7px 10px;font-size:11px;color:var(--muted)">
+            <b>M = Mechanism &nbsp; | &nbsp; A = Actor &nbsp; | &nbsp; P = Pattern</b><br><span>Tag the signal you observed — not someone’s character.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3>🏆 5. CLAIM THE WIN</h3>
+        <div class="claim-grid">
+          <label><input type="checkbox" class="win"> 🎯 Signal reached owner</label>
+          <label><input type="checkbox" class="win"> 👥 Staff solved locally</label>
+          <label><input type="checkbox" class="win"> ? Repeated question reduced</label>
+          <label><input type="checkbox" class="win"> 🤝 Handoff clearer</label>
+          <label><input type="checkbox" class="win"> ↘ Waste / rework down</label>
+          <label><input type="checkbox" class="win"> 👥 Team saw the why</label>
+        </div>
+        <div class="win-fields">
+          <div><b>★ Best win:</b><input id="bestWin" class="textarea"></div>
+          <div><b>👥 Who leveled up / what capability increased?</b><input id="leveled" class="textarea"></div>
+          <div><b>↻ What still broke / what do we watch next?</b><input id="stillBreaks" class="textarea"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="unlock">
+      <div class="lock">🔒</div>
+      <div><b>UNLOCK LEVEL 2 WHEN:</b><br><span id="unlockText">1 repair tested + 5 observations logged + one system learning named.</span></div>
+    </div>
+    <div class="next">
+      <div class="next-line"><b>◎ NEXT STEP:</b> <span>Repeat</span> | Add evidence | Route issue | Standardize win | Share Village Win</div>
+      <div class="status" id="status">Do not advance because the card is full. Advance because the system learned.</div>
+    </div>
+  </div>
+</section>
+
+<div class="actionbar">
+  <button class="lightbtn" onclick="loadSample()">Load 2.9 sanitation example</button>
+  <button class="lightbtn" onclick="resetCard()">Reset card</button>
+  <button class="lightbtn" onclick="window.print()">Print / Save PDF</button>
+  <button class="primarybtn" onclick="saveRound()">Save round to field dataset</button>
+  <button class="lightbtn" onclick="toggleLevel2()">Open field dataset</button>
+</div>
+
+<section class="level2" id="level2">
+  <div class="level2-head">
+    <div>
+      <h2>FIELD DATASET — SAVED ROUNDS</h2>
+      <small>Raw rounds first. Patterns and constellations come later, if the evidence earns them.</small>
+    </div>
+    <div style="font-weight:900;color:#dceb30">FIELD TRUTH FIRST</div>
+  </div>
+  <div style="padding:16px 18px;background:#071522">
+    <div id="datasetStats" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div style="border:1px solid #31506c;border-radius:10px;padding:14px">
+        <div style="font-size:12px;font-weight:900;letter-spacing:.08em;color:#9ccbd3;text-transform:uppercase">Alpha rule</div>
+        <div id="candidateSignals" style="margin-top:10px;color:#e8f1f4"></div>
+      </div>
+      <div style="border:1px solid #31506c;border-radius:10px;padding:14px">
+        <div style="font-size:12px;font-weight:900;letter-spacing:.08em;color:#9ccbd3;text-transform:uppercase">Observed evidence</div>
+        <div id="datasetEvidence" style="margin-top:10px;color:#e8f1f4;max-height:220px;overflow:auto"></div>
+      </div>
+    </div>
+  </div>
+  <div class="const-copy" id="constCopy">
+    This Alpha dataset preserves completed rounds and raw observations. It does not make pattern, constellation, or causal claims. Those belong to later analysis after enough real field evidence exists.
+  </div>
+  <div style="padding:12px 18px;background:#0b2237;display:flex;gap:8px;flex-wrap:wrap">
+    <button class="lightbtn" onclick="downloadDataset()">Download field dataset (.json)</button>
+    <button class="lightbtn" onclick="clearDataset()">Clear local dataset</button>
+  </div>
+</section>
+
+<script>
+const state={domains:new Set()};
+const obsRows=document.getElementById('obsRows');
+for(let i=1;i<=5;i++){
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td style="text-align:center;font-weight:900">${i}</td>
+  <td><select class="obs-type" aria-label="MAP lens"><option value=""></option><option value="M">M · Mechanism</option><option value="A">A · Actor</option><option value="P">P · Pattern</option></select></td>
+  <td><textarea class="obs-what"></textarea></td>
+  <td><textarea class="obs-learn"></textarea></td>`;
+  obsRows.appendChild(tr);
+}
+document.querySelectorAll('.node').forEach(n=>{
+  n.addEventListener('click',()=>{
+    const d=n.dataset.domain;
+    if(state.domains.has(d)) state.domains.delete(d); else state.domains.add(d);
+    n.classList.toggle('active',state.domains.has(d));
+    update();
+  });
+});
+document.getElementById('issue').addEventListener('input',e=>{document.getElementById('coreIssue').value=e.target.value;update()});
+document.getElementById('coreIssue').addEventListener('input',e=>{document.getElementById('issue').value=e.target.value;update()});
+document.querySelectorAll('input,textarea,select').forEach(el=>el.addEventListener('input',update));
+document.querySelectorAll('input[type=checkbox]').forEach(el=>el.addEventListener('change',update));
+
+function update(){
+  document.getElementById('cluster').textContent=state.domains.size?[...state.domains].join(' + '):'None selected.';
+  const obs=[...document.querySelectorAll('.obs-what')].filter(x=>x.value.trim()).length;
+  const repair=document.getElementById('localMove').value.trim() || [...document.querySelectorAll('.move')].some(x=>x.checked);
+  const learned=[...document.querySelectorAll('.obs-learn')].some(x=>x.value.trim());
+  const unlocked=obs>=5 && repair && learned;
+  document.getElementById('status').textContent=unlocked
+    ? 'ROUND READY — enough evidence exists to save this field round.'
+    : 'Do not advance because the card is full. Advance because the system learned.';
+  document.querySelector('.lock').textContent=unlocked?'🔓':'🔒';
+  save();
+}
+function escapeHtml(value=''){
+  return String(value).replace(/[&<>"']/g,ch=>({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[ch]));
+}
+function currentRoundData(){
+  const obsType=[...document.querySelectorAll('.obs-type')];
+  const obsWhat=[...document.querySelectorAll('.obs-what')];
+  const obsLearn=[...document.querySelectorAll('.obs-learn')];
+  const observations=obsWhat.map((x,i)=>({
+    type:obsType[i].value,
+    observation:x.value.trim(),
+    learning:obsLearn[i].value.trim()
+  })).filter(x=>x.observation || x.learning);
+  return {
+    schema:'prep.alpha.rc2.round',
+    tool:'PREP',
+    version:'3.0 Alpha RC2',
+    savedAt:new Date().toISOString(),
+    team:document.getElementById('team').value.trim(),
+    date:document.getElementById('date').value,
+    round:document.getElementById('round').value.trim(),
+    lead:document.getElementById('lead').value.trim(),
+    issue:document.getElementById('issue').value.trim(),
+    where:document.getElementById('where').value.trim(),
+    affected:document.getElementById('affected').value.trim(),
+    sourceOfStrain:document.getElementById('strain').value.trim(),
+    optionalFieldLenses:[...state.domains],
+    localMove:document.getElementById('localMove').value.trim(),
+    owner:document.getElementById('owner').value.trim(),
+    returnDue:document.getElementById('due').value.trim(),
+    bestWin:document.getElementById('bestWin').value.trim(),
+    capabilityIncreased:document.getElementById('leveled').value.trim(),
+    stillBreaks:document.getElementById('stillBreaks').value.trim(),
+    observations
+  };
+}
+function getDataset(){
+  try{return JSON.parse(localStorage.getItem('prep30AlphaFieldDataset')||'[]')}catch(e){return[]}
+}
+function saveRound(){
+  const r=currentRoundData();
+  if(!r.issue || r.observations.length===0){
+    alert('Add a recurring issue and at least one field observation before saving the round.');
+    return;
+  }
+  const ds=getDataset();
+  ds.push(r);
+  localStorage.setItem('prep30AlphaFieldDataset',JSON.stringify(ds));
+  renderDataset();
+  document.getElementById('level2').classList.add('show');
+}
+function renderDataset(){
+  const ds=getDataset();
+  const observations=ds.flatMap(r=>r.observations.map(o=>({...o,round:r.round||'?',date:r.date||'',team:r.team||''})));
+  const stats=document.getElementById('datasetStats');
+  if(!stats)return;
+  const cards=[['Rounds saved',ds.length],['Observations',observations.length]];
+  stats.innerHTML=cards.map(([k,v])=>`<div style="border:1px solid #31506c;border-radius:10px;padding:12px"><div style="color:#9ccbd3;font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em">${k}</div><div style="font-size:28px;font-weight:950;margin-top:3px">${v}</div></div>`).join('');
+
+  const sig=document.getElementById('candidateSignals');
+  sig.innerHTML='<b>No automated pattern claim in Alpha.</b><br><span style="color:#9fb4c2">PREP saves the rounds and observations first. Later analysis can look for repeated relationships only after enough real field data exists.</span>';
+  const ev=document.getElementById('datasetEvidence');
+  ev.innerHTML=observations.length?observations.map(o=>`<div style="padding:7px 0;border-bottom:1px solid #17364f"><b>Round ${o.round}${o.date?' · '+o.date:''}</b>${o.type?' · '+o.type:''}<br>${escapeHtml(o.observation||'')}${o.learning?`<br><span style="color:#9ccbd3">Learned: ${escapeHtml(o.learning)}</span>`:''}</div>`).join(''):'<span style="color:#9fb4c2">No saved field observations yet.</span>';
+}
+function toggleLevel2(){
+  document.getElementById('level2').classList.toggle('show');
+  renderDataset();
+}
+function downloadDataset(){
+  const ds=getDataset();
+  const blob=new Blob([JSON.stringify(ds,null,2)],{type:'application/json'});
+  const u=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=u;a.download='PREP_3.0_Alpha_Field_Dataset.json';a.click();
+  URL.revokeObjectURL(u);
+}
+function clearDataset(){
+  if(confirm('Clear the locally saved PREP field dataset from this browser?')){
+    localStorage.removeItem('prep30AlphaFieldDataset');
+    renderDataset();
+  }
+}
+function loadSample(){
+  resetCard(false);
+  document.getElementById('team').value='Dietary — Tray Line';
+  document.getElementById('round').value='1';
+  document.getElementById('lead').value='Supervisor / FSD';
+  document.getElementById('issue').value='Sani bucket missing from tray line at start of lunch service twice this week.';
+  document.getElementById('coreIssue').value=document.getElementById('issue').value;
+  document.getElementById('where').value='Tray line, 10:45–11:15 setup window.';
+  document.getElementById('affected').value='Cook, tray aide, residents waiting for lunch service.';
+  document.getElementById('strain').value='Setup depends on memory while lunch prep creates a predictable timing conflict.';
+  ['Timing','Routing','Rhythm','Tools'].forEach(d=>state.domains.add(d));
+  document.querySelectorAll('.node').forEach(n=>n.classList.toggle('active',state.domains.has(n.dataset.domain)));
+  const types=['M','M','A','P','P'];
+  const whats=['Bucket missing at 10:55','Test strips stored in office','No one clearly owned reset','Same lunch setup conflict repeated','Aide responded <30s after visible cue'];
+  const learns=['No visible setup trigger','Tool not at point of work','Ownership/routing gap','Timing/rhythm issue','Repair started holding'];
+  [...document.querySelectorAll('.obs-type')].forEach((e,i)=>e.value=types[i]);
+  [...document.querySelectorAll('.obs-what')].forEach((e,i)=>e.value=whats[i]);
+  [...document.querySelectorAll('.obs-learn')].forEach((e,i)=>e.value=learns[i]);
+  document.getElementById('localMove').value='Add a visible pre-service sanitation checkpoint and move test strips to point of work.';
+  document.getElementById('owner').value='Tray aide';
+  document.getElementById('due').value='Tomorrow, 10:30';
+  document.getElementById('bestWin').value='Cleanup starts on time without manager rescue.';
+  document.getElementById('leveled').value='Tray aide — owns the reset signal.';
+  document.getElementById('stillBreaks').value='Watch weekend staffing and whether the cue survives a different shift.';
+  const wins=[...document.querySelectorAll('.win')]; [0,1,3,4,5].forEach(i=>wins[i].checked=true);
+  update();
+}
+function resetCard(saveIt=true){
+  state.domains.clear();
+  document.querySelectorAll('.node').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('input').forEach(x=>{if(x.type==='checkbox')x.checked=false;else if(x.id!=='round')x.value=''});
+  document.querySelectorAll('textarea').forEach(x=>x.value='');
+  document.querySelectorAll('select').forEach(x=>x.value='');
+  document.getElementById('round').value='1';
+  if(saveIt) update();
+}
+function save(){
+  try{
+    const data={
+      domains:[...state.domains],
+      vals:Object.fromEntries([...document.querySelectorAll('input,textarea,select')].filter((x,i)=>x.id).map(x=>[x.id,x.type==='checkbox'?x.checked:x.value])),
+      obsType:[...document.querySelectorAll('.obs-type')].map(x=>x.value),
+      obsWhat:[...document.querySelectorAll('.obs-what')].map(x=>x.value),
+      obsLearn:[...document.querySelectorAll('.obs-learn')].map(x=>x.value),
+      moves:[...document.querySelectorAll('.move')].map(x=>x.checked),
+      wins:[...document.querySelectorAll('.win')].map(x=>x.checked)
+    };
+    localStorage.setItem('prep30AlphaRC2',JSON.stringify(data));
+  }catch(e){}
+}
+function restore(){
+  try{
+    const d=JSON.parse(localStorage.getItem('prep30AlphaRC2')||'null'); if(!d)return;
+    (d.domains||[]).forEach(x=>state.domains.add(x==='Person'?'Actor':x));
+    document.querySelectorAll('.node').forEach(n=>n.classList.toggle('active',state.domains.has(n.dataset.domain)));
+    Object.entries(d.vals||{}).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v});
+    [...document.querySelectorAll('.obs-type')].forEach((x,i)=>x.value=d.obsType?.[i]||'');
+    [...document.querySelectorAll('.obs-what')].forEach((x,i)=>x.value=d.obsWhat?.[i]||'');
+    [...document.querySelectorAll('.obs-learn')].forEach((x,i)=>x.value=d.obsLearn?.[i]||'');
+    [...document.querySelectorAll('.move')].forEach((x,i)=>x.checked=!!d.moves?.[i]);
+    [...document.querySelectorAll('.win')].forEach((x,i)=>x.checked=!!d.wins?.[i]);
+  }catch(e){}
+}
+restore();update();renderDataset();
+</script>
+</body>
+</html>

@@ -18,23 +18,30 @@ export function WorldResources({ node }: { node: CelestialNode }) {
   }
 
   return (
-    <nav className="world-resources" aria-label={`${node.publicLabel} resources`}>
-      {content.resources.map((resource) => {
-        const Icon = iconByKind[resource.kind];
-        return (
-          <a
-            key={resource.id}
-            href={resource.href}
-            target={resource.external ? "_blank" : undefined}
-            rel={resource.external ? "noreferrer" : undefined}
-            title={resource.description ?? resource.label}
-          >
-            <Icon aria-hidden="true" />
-            <span>{resource.label}</span>
-            {resource.external && <ArrowUpRight aria-hidden="true" />}
-          </a>
-        );
-      })}
-    </nav>
+    <>
+      {node.id === "field-tools" && (
+        <p className="world-storage-note">
+          Alpha privacy: working data stays in this browser unless you export or share it.
+        </p>
+      )}
+      <nav className="world-resources" aria-label={`${node.publicLabel} resources`}>
+        {content.resources.map((resource) => {
+          const Icon = iconByKind[resource.kind];
+          return (
+            <a
+              key={resource.id}
+              href={resource.href}
+              target={resource.external ? "_blank" : undefined}
+              rel={resource.external ? "noreferrer" : undefined}
+              title={resource.description ?? resource.label}
+            >
+              <Icon aria-hidden="true" />
+              <span>{resource.label}</span>
+              {resource.external && <ArrowUpRight aria-hidden="true" />}
+            </a>
+          );
+        })}
+      </nav>
+    </>
   );
 }

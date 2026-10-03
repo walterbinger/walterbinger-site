@@ -613,6 +613,26 @@ a:focus-visible,
   width: 15px;
 }
 
+.world-storage-note {
+  position: absolute;
+  right: 1rem;
+  bottom: 6.35rem;
+  left: 1rem;
+  z-index: 18;
+  width: fit-content;
+  max-width: min(620px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 0.35rem 0.65rem;
+  border: 1px solid rgba(35, 32, 27, 0.16);
+  border-radius: 999px;
+  background: rgba(248, 246, 239, 0.82);
+  color: rgba(35, 32, 27, 0.72);
+  font-size: 0.68rem;
+  line-height: 1.2;
+  text-align: center;
+  backdrop-filter: blur(8px);
+}
+
 .world-resources {
   position: absolute;
   right: 1rem;
@@ -1153,6 +1173,15 @@ a:focus-visible,
   .world-chrome h1 {
     max-width: 140px;
     overflow-wrap: anywhere;
+  }
+
+  .world-storage-note {
+    position: fixed;
+    right: 0.7rem;
+    bottom: 6.2rem;
+    left: 0.7rem;
+    max-width: none;
+    font-size: 0.62rem;
   }
 
   .world-resources {
