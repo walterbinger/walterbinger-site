@@ -18,16 +18,24 @@ describe("authored universe registry", () => {
     expect(validateBidirectionalRelationships(AUTHORED_BODIES)).toEqual([]);
   });
 
-  it("keeps PREP content separate from the universe topology", () => {
+  it("keeps PREP/PERP content separate from the universe topology", () => {
     const content = getWorldContent("field-tools");
-    expect(content?.resources.at(0)).toMatchObject({
-      id: "prep-complete-field-kit",
-      kind: "tool",
-    });
+    expect(content?.resources).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: "prep-3-alpha-interactive",
+          kind: "tool",
+        }),
+        expect.objectContaining({
+          id: "perp-13-alpha-interactive",
+          kind: "tool",
+        }),
+      ]),
+    );
     expect(content?.slots).toContainEqual(
       expect.objectContaining({
         id: "prep-perp-interactive",
-        status: "curation-needed",
+        status: "available",
       }),
     );
   });
