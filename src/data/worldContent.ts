@@ -3,60 +3,31 @@ import type { WorldContentDefinition } from "../domain/content";
 export const WORLD_CONTENT = {
   "field-tools": {
     nodeId: "field-tools",
-    status: "seeded",
+    status: "curating",
     resources: [
       {
-        id: "prep-complete-field-kit",
-        label: "PREP Beta 1.0 — Complete Field Kit",
+        id: "prep-3-alpha-interactive",
+        label: "PREP 3.0 Alpha",
         kind: "tool",
-        href: "https://docs.google.com/document/d/1d6e135C203qSSBP1gL6vJCGL4j3gItdRGcOuE9wJ1ok/edit",
+        href: "/universe/field-tools/prep-3.0-alpha.html",
         description:
-          "The ten-card field kit and its Notice, Name, Map, Repair, Return loop.",
-        external: true,
+          "Ground-up field observation: map the signal, test one local move, return, and preserve the evidence.",
       },
       {
-        id: "prep-field-signal-card",
-        label: "PREP 03 — Field Signal Card",
+        id: "perp-13-alpha-interactive",
+        label: "PERP 1.3 Alpha",
         kind: "tool",
-        href: "https://docs.google.com/document/d/1yQjoe7EYyoUpJSZe82aTBbluI3vHvv_LRHfsnDFqaDM/edit",
+        href: "/universe/field-tools/perp-1.3-alpha.html",
         description:
-          "A field tool for naming recurring system signals without defaulting to blame.",
-        external: true,
-      },
-      {
-        id: "prep-perp-architecture",
-        label: "PREP / PERP Closed-Circuit Architecture",
-        kind: "document",
-        href: "https://docs.google.com/document/d/1R4UZj36SiO1VrYy0qd3WVEMwGDayOnh8XmtzLThBKoM/edit",
-        description:
-          "The authored relationship between field signal, leadership action, repair, proof, and system learning.",
-        external: true,
-      },
-      {
-        id: "perp-decoder-mode",
-        label: "PERP Decoder Mode — PREP Field Mapping",
-        kind: "document",
-        href: "https://docs.google.com/document/d/1xubWmeI057D4tMTHn9bhO9fzQnZLcL4jZehmF5TB86M/edit",
-        description:
-          "The mapping between field-safe PREP language and the PERP executive view.",
-        external: true,
-      },
-      {
-        id: "prep-system-integrity-pilot",
-        label: "PREP System Integrity Pilot Tool",
-        kind: "tool",
-        href: "https://docs.google.com/spreadsheets/d/1F0P8uNzVGOVVZgMLqszL36S5YacFoWZa75fKbBXn-pE/edit",
-        description:
-          "The current diagnostic, observation, routing, review, and learning workbook.",
-        external: true,
+          "System-facing diagnostic across Pressure, Evidence, Repair, and Proof, with transparent Alpha signal profiles.",
       },
     ],
     slots: [
       {
         id: "prep-perp-interactive",
         kind: "tool",
-        status: "curation-needed",
-        label: "Interactive PREP / PERP field surface",
+        status: "available",
+        label: "Interactive PREP / PERP Alpha tools",
       },
       {
         id: "prep-field-cards",
