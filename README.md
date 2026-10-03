@@ -20,6 +20,10 @@ The public homepage remains the professional front door. Beneath it, the Living 
 
 This repository is not intended to present me as a traditional software engineer. It is evidence of how I use technology, AI, documentation, testing, and structured iteration to turn ambiguous ideas into working systems.
 
+## Featured field tools
+
+**[PREP / PERP](https://walterbinger.com/universe/#/world/field-tools)** are Alpha-stage, human-centered systems tools embedded in the Living Map. PREP captures recurring field signals and small repair experiments; PERP examines a recurring breakdown through Pressure, Evidence, Repair, and Proof. Both are explicitly presented as field-testing heuristics rather than validated diagnostic instruments.
+
 ## Current stack
 
 - React 19 + TypeScript
