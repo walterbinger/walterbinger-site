@@ -10,6 +10,8 @@ import {
 } from "react";
 import { ArrowLeft, Expand } from "lucide-react";
 import { ALL_BODIES, AUTHORED_BODIES } from "../data/bodies";
+import { DIRECTED_RELATIONSHIPS } from "../data/relationships";
+import { getSubstanceRecord } from "../data/substance";
 import {
   LENSES,
   LENS_IDS,
@@ -40,9 +42,13 @@ import {
 import {
   createGravitySystem,
   gravityTargetForNode,
-  relationshipAffinity,
   type GravitySystem,
 } from "../domain/gravity";
+import {
+  effectiveRelationshipStrength,
+  relationshipLensRelevance,
+  type DirectedRelationship,
+} from "../domain/relationships";
 import { useReducedMotion } from "../hooks/useReducedMotion";
 import { useUniverseStore } from "../state/universeStore";
 import {
@@ -51,6 +57,7 @@ import {
   EmergingGlyph,
 } from "./BodyGlyph";
 import { LensInstrument } from "./LensInstrument";
+import { LifeOfPiePrototype } from "./LifeOfPiePrototype";
 import { WorldResources } from "./WorldResources";
 
 interface RuntimeBody {
@@ -76,15 +83,84 @@ interface PinchState {
   panY: number;
 }
 
-const RELATIONSHIPS = AUTHORED_BODIES.flatMap((node) =>
-  node.relatedNodeIds
-    .filter((relatedId) => node.id < relatedId)
-    .map((relatedId) => ({
-      id: `${node.id}--${relatedId}`,
-      from: node.id,
-      to: relatedId,
-    })),
-);
+const RELATIONSHIPS = DIRECTED_RELATIONSHIPS;
+const AUTHORED_BY_ID = new Map(AUTHORED_BODIES.map((node) => [node.id, node]));
+
+type RelationshipFocus = "idle" | "lens" | "attention" | "receding";
+
+function relationshipVisibilityClass(focus: RelationshipFocus): string {
+  return focus === "lens" || focus === "attention" ? " is-visible" : "";
+}
+
+function relationshipKindLabel(kind: DirectedRelationship["kind"]): string {
+  return kind.replace("-", " ");
+}
+
+const NODE_SYNTHESIS: Readonly<Record<string, string>> = {
+  "life-of-pie":
+    "A safe, familiar form with an endlessly variable surface: Brooklyn comfort food became Walter’s laboratory for craft, travel, hospitality, scarcity, memory, and self-discovery. The world asks how much can change while something still feels like home.",
+  "empanadas-son":
+    "A portable food became a bridge between Argentina, Brooklyn, entrepreneurship, craft, and belonging. Empanadas Son! is less a food archive than a record of what happens when a form migrates and becomes local again.",
+  argentina:
+    "Argentina behaves less like one destination than a system of connected experiences: language, food, migration, entrepreneurship, identity, and the practice of relearning familiar things in another cultural grammar.",
+};
+
+const RELATIONSHIP_SYNTHESIS: Readonly<Record<string, string>> = {
+  "brooklyn-forms-life-of-pie":
+    "Brooklyn is more than provenance here: it establishes Walter’s baseline for what a slice is supposed to feel like — cheap, foldable, familiar, and tied to memory. Life of Pie starts with that certainty, then tests how much can change without losing the thing itself.",
+  "craft-shapes-life-of-pie":
+    "Pizza became a practical teacher of patience, preparation, heat, sequence, restraint, and repetition. The craft connection is the shift from simply making tasty food to understanding why a pie works — and being able to reproduce it on purpose.",
+  "care-gives-life-of-pie-gravity":
+    "Pizza carries comfort because feeding people changes their state: hunger softens, attention synchronizes, and a shared meal creates temporary common ground. Care is part of the physics of this world, not decoration around it.",
+  "hospitality-practiced-through-life-of-pie":
+    "Life of Pie turns hospitality into something concrete: make something people already want, then use technique, surprise, and generosity to improve the experience without making the guest work for it.",
+  "argentina-translates-life-of-pie":
+    "Argentina taught Walter that familiar forms survive translation by adapting to local ingredients, habits, language, and pride. The point is not preserving a museum-perfect original; it is noticing what survives the move and what becomes newly authentic.",
+  "empanadas-and-pie-share-portability":
+    "Pizza and empanadas solve a similar human problem in different forms: comfort that travels. Both can be held, shared, sold on the street, carried across borders, and loaded with local identity without losing their basic usefulness.",
+  "life-of-pie-refines-craft":
+    "The feedback runs both ways: making enough pizza sharpened Walter’s broader sense of technique — prep first, less rushing, better sequencing, more restraint, and more attention to the system underneath the result.",
+  "life-of-pie-offers-care":
+    "Pizza gives care back through accessibility: it can be cheap, filling, familiar, portable, celebratory, or simply available at 2 A.M. Its value often comes from meeting the person where they actually are.",
+};
+
+function relationshipBrief(
+  relationship: DirectedRelationship,
+  sourceLabel: string,
+  targetLabel: string,
+): string {
+  const synthesis = RELATIONSHIP_SYNTHESIS[relationship.id];
+  if (synthesis) {
+    return synthesis;
+  }
+
+  switch (relationship.kind) {
+    case "origin":
+      return `${sourceLabel} helps form the origin story of ${targetLabel}.`;
+    case "place":
+      return `${sourceLabel} locates or reframes ${targetLabel} through place.`;
+    case "practice":
+      return `${targetLabel} is a place where ${sourceLabel} gets practiced in the world.`;
+    case "craft":
+      return `${sourceLabel} shapes how ${targetLabel} is made, refined, or understood.`;
+    case "expression":
+      return `${targetLabel} is one expression of something carried by ${sourceLabel}.`;
+    case "care":
+      return `${sourceLabel} and ${targetLabel} connect through care, nourishment, or attention.`;
+    case "service":
+      return `${sourceLabel} connects to ${targetLabel} through service and usefulness.`;
+    case "implementation":
+      return `${sourceLabel} becomes concrete through ${targetLabel}.`;
+    case "learning":
+      return `${sourceLabel} changes what can be learned or understood about ${targetLabel}.`;
+    case "documentation":
+      return `${sourceLabel} preserves or explains evidence connected to ${targetLabel}.`;
+    case "collaboration":
+      return `${sourceLabel} and ${targetLabel} are linked by work made with or through others.`;
+    case "movement":
+      return `${sourceLabel} and ${targetLabel} connect through travel, portability, or translation.`;
+  }
+}
 
 function dominantLensId(node: CelestialNode): LensId {
   return LENS_IDS.reduce((strongest, lensId) =>
@@ -105,6 +181,16 @@ const INITIAL_CAMERA: CameraState = {
   panX: 0,
   panY: 0,
 };
+
+function skyZoomForWidth(width: number): number {
+  if (width < 480) {
+    return 0.94;
+  }
+  if (width < 720) {
+    return 0.78;
+  }
+  return INITIAL_CAMERA.zoom;
+}
 
 function copyVector(point: Vector3): Vector3 {
   return { x: point.x, y: point.y, z: point.z };
@@ -127,6 +213,47 @@ function constellationSegmentPath(
   const controlX = midpointX - (deltaY / length) * length * bend;
   const controlY = midpointY + (deltaX / length) * length * bend;
   return `M${from.x.toFixed(1)} ${from.y.toFixed(1)}Q${controlX.toFixed(1)} ${controlY.toFixed(1)} ${to.x.toFixed(1)} ${to.y.toFixed(1)}`;
+}
+
+function relationshipGeometry(
+  relationship: DirectedRelationship,
+  from: ProjectedPoint,
+  to: ProjectedPoint,
+): { path: string; destinationNib: string } {
+  const deltaX = to.x - from.x;
+  const deltaY = to.y - from.y;
+  const length = Math.hypot(deltaX, deltaY) || 1;
+  const midpointX = (from.x + to.x) / 2;
+  const midpointY = (from.y + to.y) / 2;
+  const classBend = {
+    direct: 0.055,
+    partial: 0.14,
+    loose: 0.22,
+  }[relationship.connectionClass];
+  const direction = relationship.sourceId < relationship.targetId ? 1 : -1;
+  const bow = clamp(
+    length * (classBend + (1 - relationship.strength) * 0.035),
+    18,
+    relationship.connectionClass === "direct" ? 74 : 156,
+  );
+  const controlX = midpointX - (deltaY / length) * bow * direction;
+  const controlY = midpointY + (deltaX / length) * bow * direction;
+  const tangentX = to.x - controlX;
+  const tangentY = to.y - controlY;
+  const tangentLength = Math.hypot(tangentX, tangentY) || 1;
+  const unitX = tangentX / tangentLength;
+  const unitY = tangentY / tangentLength;
+  const normalX = -unitY;
+  const normalY = unitX;
+  const nibLength = 7 + relationship.strength * 3;
+  const nibWidth = 2.5 + relationship.strength * 1.5;
+  const nibBaseX = to.x - unitX * nibLength;
+  const nibBaseY = to.y - unitY * nibLength;
+
+  return {
+    path: `M${from.x.toFixed(1)} ${from.y.toFixed(1)}Q${controlX.toFixed(1)} ${controlY.toFixed(1)} ${to.x.toFixed(1)} ${to.y.toFixed(1)}`,
+    destinationNib: `M${(nibBaseX + normalX * nibWidth).toFixed(1)} ${(nibBaseY + normalY * nibWidth).toFixed(1)}L${to.x.toFixed(1)} ${to.y.toFixed(1)}L${(nibBaseX - normalX * nibWidth).toFixed(1)} ${(nibBaseY - normalY * nibWidth).toFixed(1)}`,
+  };
 }
 
 function phaseTargetForNode(
@@ -166,27 +293,34 @@ function environmentPaths(glyphKey?: string) {
       return (
         <>
           <path d="M0 810Q250 720 500 810T1000 810 1500 810" />
-          <path d="M160 850v-140h270v140M215 710v-70h160v70M190 760h215M260 640v-50h70v50" />
-          <path d="M1120 870q120-180 240 0M1180 784q60-90 120 0" />
+          <path d="M130 760h360M190 760v95M430 760v95M250 760q60-80 120 0" />
+          <path d="M1080 850q130-210 260 0M1140 765q70-105 140 0M710 610v95M675 705q35-55 70 0" />
         </>
       );
     case "archive":
     case "book":
       return (
         <>
-          <path d="M0 820h1600M90 820V560h280v260M1230 820V540h290v280" />
-          <path d="M120 610h220M120 670h220M120 730h220M1260 600h230M1260 665h230M1260 730h230" />
-          <path d="M650 820V650h300v170M720 650v-80h160v80" />
+          <path d="M0 820Q350 790 760 820T1600 815" />
+          <path d="M120 610h260M105 675h300M135 740h235M1220 595h250M1190 665h310M1235 735h225" />
+          <path d="M710 790h230M745 790v70M905 790v70M260 820V560M230 610h60M230 670h60M230 730h60" />
         </>
       );
     case "healthcare":
     case "balance":
+      return (
+        <>
+          <path d="M0 830Q360 800 760 830T1600 825" />
+          <path d="M130 730h310M1170 700h330M240 730v105M1370 700v130" />
+          <path d="M670 790h260M730 790v70M870 790v70M800 610v180M750 665h100" />
+        </>
+      );
     case "field-tools":
       return (
         <>
-          <path d="M0 830h1600M80 830V700h340M1180 830V660h330" />
-          <path d="M190 700v-90h120v90M1260 660v-120h170v120" />
-          <path d="M650 830V710h300v120M730 710v-80h140v80" />
+          <path d="M0 835Q320 790 650 825T1220 815 1600 835" />
+          <path d="M130 760q170-120 340-10M1130 750q155-125 310-5" />
+          <path d="M690 760q110-170 220 0M800 590v170M755 635h90M720 690h160" />
         </>
       );
     case "bridge":
@@ -203,6 +337,17 @@ function environmentPaths(glyphKey?: string) {
           <path d="M0 830Q300 770 560 830T1120 820 1600 830" />
           <path d="M260 830q-15-145 30-270M285 590l-100 70M290 630l120 50M278 690l-140 80M285 730l130 65" />
           <path d="M1280 830q-10-110 25-210M1300 650l-90 70M1300 700l100 55" />
+        </>
+      );
+    case "life-of-pie":
+      return (
+        <>
+          <path d="M0 838Q300 800 580 830T1100 820 1600 838" />
+          <path d="M180 830h360M1060 830h350" />
+          <path d="M585 830Q800 530 1015 830" />
+          <path d="M640 830Q800 625 960 830" />
+          <path d="M675 770h250M710 710h180M755 650h90" />
+          <path d="M330 830v-120M1270 830v-120M290 710h80M1230 710h80" />
         </>
       );
     default:
@@ -241,6 +386,8 @@ export function LivingMapScene({
   const nodeRefs = useRef(new Map<string, SVGGElement>());
   const nebulaRefs = useRef(new Map<string, SVGCircleElement>());
   const relationRefs = useRef(new Map<string, SVGPathElement>());
+  const relationHitRefs = useRef(new Map<string, SVGPathElement>());
+  const relationNibRefs = useRef(new Map<string, SVGPathElement>());
   const trailRefs = useRef(new Map<string, SVGPathElement>());
   const constellationPointRefs = useRef(new Map<string, SVGGElement>());
   const constellationSegmentRefs = useRef(
@@ -251,7 +398,10 @@ export function LivingMapScene({
   const cameraTarget = useRef<CameraState>({ ...INITIAL_CAMERA });
   const gravity = useRef<GravitySystem | null>(null);
   if (!gravity.current) {
-    gravity.current = createGravitySystem(ALL_BODIES);
+    gravity.current = createGravitySystem(
+      ALL_BODIES,
+      DIRECTED_RELATIONSHIPS,
+    );
   }
   const runtime = useRef(
     new Map<string, RuntimeBody>(
@@ -282,7 +432,9 @@ export function LivingMapScene({
   const spacePressed = useRef(false);
   const lastInteractionAt = useRef(performance.now());
   const previousGratitudePhase = useRef(gratitudePhase);
+  const resolveOnEnterRef = useRef<string | null>(null);
   const [size, setSize] = useState({ width: 1600, height: 1000 });
+  const [hoveredRelationshipId, setHoveredRelationshipId] = useState<string | null>(null);
 
   const activeColor = mixLensColors(activeLensIds);
   const activeConstellation = useMemo(
@@ -309,16 +461,17 @@ export function LivingMapScene({
     () => ALL_BODIES.find((node) => node.id === centeredId) ?? null,
     [centeredId],
   );
+  const centeredSubstance = useMemo(
+    () => (centeredId ? getSubstanceRecord(centeredId) : undefined),
+    [centeredId],
+  );
   const attentionIds = useMemo(() => {
     const ids = new Set(pinnedIds);
-    if (hoveredId) {
-      ids.add(hoveredId);
-    }
     if (centeredId) {
       ids.add(centeredId);
     }
     return ids;
-  }, [centeredId, hoveredId, pinnedIds]);
+  }, [centeredId, pinnedIds]);
   const awakenedNodeIds = useMemo(() => {
     const ids = new Set(attentionIds);
 
@@ -342,40 +495,71 @@ export function LivingMapScene({
   const relationshipStates = useMemo(
     () =>
       RELATIONSHIPS.map((relationship) => {
-        const from = AUTHORED_BODIES.find(
-          (node) => node.id === relationship.from,
-        );
-        const to = AUTHORED_BODIES.find(
-          (node) => node.id === relationship.to,
-        );
+        const from = AUTHORED_BY_ID.get(relationship.sourceId);
+        const to = AUTHORED_BY_ID.get(relationship.targetId);
         if (!from || !to) {
           return null;
         }
 
-        const spectralMatch =
-          activeLensIds.length > 0 &&
-          lensRelevance(from, activeLensIds) > 0.54 &&
-          lensRelevance(to, activeLensIds) > 0.54;
-        const attentionMatch =
-          attentionIds.size > 0 &&
-          awakenedNodeIds.has(from.id) &&
-          awakenedNodeIds.has(to.id);
-        const fromLens = dominantLensId(from);
-        const toLens = dominantLensId(to);
+        const lensStrength = relationshipLensRelevance(
+          relationship,
+          activeLensIds,
+        );
+        const incident =
+          attentionIds.has(relationship.sourceId) ||
+          attentionIds.has(relationship.targetId);
+        let focus: RelationshipFocus = "idle";
+        if (attentionIds.size > 0) {
+          focus = incident ? "attention" : "receding";
+        } else if (activeLensIds.length > 0) {
+          focus = lensStrength > 0 ? "lens" : "receding";
+        }
+        const matchingLensIds = activeLensIds.filter((lensId) =>
+          relationship.lensChannels.includes(lensId),
+        );
         const colors =
-          activeLensIds.length > 0
-            ? activeLensIds.map(lensColor)
-            : [lensColor(fromLens), lensColor(toLens)];
+          matchingLensIds.length > 0
+            ? matchingLensIds.map(lensColor)
+            : focus === "attention"
+              ? [
+                  lensColor(dominantLensId(from)),
+                  lensColor(dominantLensId(to)),
+                ]
+              : ["#504b43", "#23201b"];
 
         return {
           ...relationship,
-          active: spectralMatch || attentionMatch,
-          affinity: relationshipAffinity(from, to),
-          bridge: fromLens !== toLens,
+          focus,
+          lensStrength,
+          effectiveStrength: effectiveRelationshipStrength(
+            relationship,
+            activeLensIds,
+            attentionIds,
+          ),
           colors,
         };
       }).filter((relationship) => relationship !== null),
-    [activeLensIds, attentionIds, awakenedNodeIds],
+    [activeLensIds, attentionIds],
+  );
+
+  const hoveredRelationship = useMemo(
+    () =>
+      relationshipStates.find(
+        (relationship) => relationship.id === hoveredRelationshipId,
+      ) ?? null,
+    [hoveredRelationshipId, relationshipStates],
+  );
+  const discoveryNode = useMemo(
+    () =>
+      ALL_BODIES.find((node) => node.id === hoveredId) ??
+      selectedNode ??
+      centeredNode ??
+      null,
+    [centeredNode, hoveredId, selectedNode],
+  );
+  const discoverySubstance = useMemo(
+    () => (discoveryNode ? getSubstanceRecord(discoveryNode.id) : undefined),
+    [discoveryNode],
   );
 
   useEffect(() => {
@@ -395,6 +579,12 @@ export function LivingMapScene({
     observer.observe(container);
     return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    if (mode === "world" && centeredId) {
+      window.scrollTo(0, 0);
+    }
+  }, [centeredId, mode]);
 
   useEffect(() => {
     const gravitySystem = gravity.current;
@@ -428,12 +618,14 @@ export function LivingMapScene({
     gravitySystem.setContext(
       activeLensIds,
       activeConstellation ? activeConstellationAnchorTargets : undefined,
+      attentionIds,
     );
     previousGratitudePhase.current = gratitudePhase;
   }, [
     activeConstellation,
     activeConstellationAnchorTargets,
     activeLensIds,
+    attentionIds,
     gratitudePhase,
   ]);
 
@@ -446,15 +638,22 @@ export function LivingMapScene({
 
   useEffect(() => {
     if (centeredId) {
-      cameraTarget.current.zoom = 1.44;
+      const resolveImmediately =
+        mode === "world" &&
+        centeredId === "life-of-pie" &&
+        resolveOnEnterRef.current === centeredId;
+      cameraTarget.current.zoom = resolveImmediately ? 2.08 : 1.44;
       cameraTarget.current.panX = 0;
       cameraTarget.current.panY = mode === "world" ? -size.height * 0.08 : 0;
+      if (resolveImmediately) {
+        resolveOnEnterRef.current = null;
+      }
     } else {
-      cameraTarget.current.zoom = INITIAL_CAMERA.zoom;
+      cameraTarget.current.zoom = skyZoomForWidth(size.width);
       cameraTarget.current.panX = 0;
       cameraTarget.current.panY = 0;
     }
-  }, [centeredId, mode, size.height]);
+  }, [centeredId, mode, size.height, size.width]);
 
   useEffect(() => {
     const keyDown = (event: globalThis.KeyboardEvent) => {
@@ -526,6 +725,25 @@ export function LivingMapScene({
           (cameraTarget.current.panY - camera.current.panY) * cameraEase,
       };
 
+      if (containerRef.current) {
+        const worldProximity =
+          mode === "world" && centeredId === "life-of-pie"
+            ? clamp((camera.current.zoom - 1.48) / 0.5, 0, 1)
+            : 0;
+        const skyArtifactProximity =
+          mode === "sky"
+            ? clamp((camera.current.zoom - 1.02) / 0.72, 0, 1)
+            : 0;
+        containerRef.current.style.setProperty(
+          "--world-proximity",
+          worldProximity.toFixed(3),
+        );
+        containerRef.current.style.setProperty(
+          "--sky-artifact-proximity",
+          skyArtifactProximity.toFixed(3),
+        );
+      }
+
       if (gratitudePhase === "idle" && !reducedMotion) {
         gravity.current?.tick(delta);
       }
@@ -573,19 +791,29 @@ export function LivingMapScene({
               : 1;
         const importanceScale =
           node.tier === "authored"
-            ? 0.68 + node.importance * 0.58
+            ? 0.6 + node.importance * 0.38 + node.contentMass * 0.28
             : node.tier === "emerging"
               ? 0.62
               : 0.48 + node.importance;
         const lensScale =
           activeLensIds.length > 0 ? 0.82 + relevance * 0.6 : 1;
         const phaseScale = gratitudePhase === "collapse" ? 0.46 : 1;
+        const zoomScale =
+          node.tier === "authored"
+            ? clamp(
+                0.9 +
+                  (camera.current.zoom - skyZoomForWidth(size.width)) * 0.34,
+                0.9,
+                1.72,
+              )
+            : 1;
         const totalScale =
           body.projected.scale *
           interactionScale *
           importanceScale *
           lensScale *
-          phaseScale;
+          phaseScale *
+          zoomScale;
         body.renderScale = totalScale;
         const baseOpacity =
           node.tier === "ambient"
@@ -737,23 +965,25 @@ export function LivingMapScene({
 
       for (const relation of RELATIONSHIPS) {
         const path = relationRefs.current.get(relation.id);
-        const from = runtime.current.get(relation.from)?.projected;
-        const to = runtime.current.get(relation.to)?.projected;
+        const hit = relationHitRefs.current.get(relation.id);
+        const nib = relationNibRefs.current.get(relation.id);
+        const from = runtime.current.get(relation.sourceId)?.projected;
+        const to = runtime.current.get(relation.targetId)?.projected;
         if (!path || !from || !to) {
           continue;
         }
-        const midpointX = (from.x + to.x) / 2;
-        const midpointY = (from.y + to.y) / 2;
-        const dx = to.x - from.x;
-        const dy = to.y - from.y;
-        const length = Math.hypot(dx, dy) || 1;
-        const bow = clamp(length * 0.17, 28, 130);
-        const controlX = midpointX - (dy / length) * bow;
-        const controlY = midpointY + (dx / length) * bow;
-        path.setAttribute(
-          "d",
-          `M${from.x.toFixed(1)} ${from.y.toFixed(1)}Q${controlX.toFixed(1)} ${controlY.toFixed(1)} ${to.x.toFixed(1)} ${to.y.toFixed(1)}`,
-        );
+        const geometry = relationshipGeometry(relation, from, to);
+        path.setAttribute("d", geometry.path);
+        hit?.setAttribute("d", geometry.path);
+        nib?.setAttribute("d", geometry.destinationNib);
+        const visible = from.visible && to.visible;
+        path.style.visibility = visible ? "visible" : "hidden";
+        if (hit) {
+          hit.style.visibility = visible ? "visible" : "hidden";
+        }
+        if (nib) {
+          nib.style.visibility = visible ? "visible" : "hidden";
+        }
       }
 
       const preview = previewRef.current;
@@ -796,8 +1026,9 @@ export function LivingMapScene({
   ]);
 
   const resetView = () => {
-    camera.current = { ...INITIAL_CAMERA };
-    cameraTarget.current = { ...INITIAL_CAMERA };
+    const skyZoom = skyZoomForWidth(size.width);
+    camera.current = { ...INITIAL_CAMERA, zoom: skyZoom };
+    cameraTarget.current = { ...INITIAL_CAMERA, zoom: skyZoom };
     lastInteractionAt.current = performance.now();
     useUniverseStore.getState().setCentered(null);
   };
@@ -905,14 +1136,19 @@ export function LivingMapScene({
       event.preventDefault();
       togglePin(node.id);
     }
-    if (event.key === "Enter" && node.inspectable) {
+    if (event.key === "Enter" && node.inspectable && node.route) {
       event.preventDefault();
       enterWorld(node.id);
     }
   };
 
   const exploreNode = (node: CelestialNode) => {
-    enterWorld(node.id);
+    if (node.route) {
+      if (node.id === "life-of-pie") {
+        resolveOnEnterRef.current = node.id;
+      }
+      enterWorld(node.id);
+    }
   };
 
   return (
@@ -921,10 +1157,19 @@ export function LivingMapScene({
       className={`living-map mode-${mode} phase-${gratitudePhase}`}
       data-star-count={ALL_BODIES.length}
       data-authored-count={AUTHORED_BODIES.length}
+      data-directed-relationship-count={DIRECTED_RELATIONSHIPS.length}
+      data-relationship-focus={
+        attentionIds.size > 0
+          ? "attention"
+          : activeLensIds.length > 0
+            ? "lens"
+            : "idle"
+      }
       data-healthcare-constellation={
         healthcareConstellationActive ? "active" : "dormant"
       }
       data-active-constellation={activeConstellation?.id ?? "none"}
+      data-centered-world={centeredId ?? "none"}
     >
       <div className="sky-paper" aria-hidden="true" />
       <svg
@@ -1081,6 +1326,18 @@ export function LivingMapScene({
           {relationshipStates.map((relationship, relationshipIndex) => (
             <g key={relationship.id}>
               <path
+                ref={(element) => {
+                  if (element) {
+                    relationHitRefs.current.set(relationship.id, element);
+                  } else {
+                    relationHitRefs.current.delete(relationship.id);
+                  }
+                }}
+                className="relationship-hit-target"
+                onPointerEnter={() => setHoveredRelationshipId(relationship.id)}
+                onPointerLeave={() => setHoveredRelationshipId(null)}
+              />
+              <path
                 id={`relationship-${relationship.id}`}
                 ref={(element) => {
                   if (element) {
@@ -1089,39 +1346,57 @@ export function LivingMapScene({
                     relationRefs.current.delete(relationship.id);
                   }
                 }}
-                className={`relationship-path${relationship.active ? " is-visible" : ""}${relationship.bridge ? " is-bridge" : ""}`}
+                className={`relationship-path${relationshipVisibilityClass(relationship.focus)} is-${relationship.focus} relation-${relationship.connectionClass}`}
                 style={
                   {
                     stroke: `url(#relationship-gradient-${relationship.id})`,
                     "--relationship-color":
                       relationship.colors[relationship.colors.length - 1],
-                    "--relationship-weight": relationship.affinity,
+                    "--relationship-weight": relationship.strength,
+                    "--relationship-effective":
+                      relationship.effectiveStrength,
                   } as CSSProperties
                 }
               />
-              {Array.from({ length: 2 }, (_, particleIndex) => (
-                <circle
-                  key={`${relationship.id}-particle-${particleIndex}`}
-                  className={`relationship-particle${relationship.active ? " is-visible" : ""}`}
-                  r={particleIndex === 0 ? 1.8 : 1.15}
-                  style={{
-                    fill: relationship.colors[
-                      (particleIndex + relationshipIndex) %
-                        relationship.colors.length
+              <path
+                ref={(element) => {
+                  if (element) {
+                    relationNibRefs.current.set(relationship.id, element);
+                  } else {
+                    relationNibRefs.current.delete(relationship.id);
+                  }
+                }}
+                className={`relationship-destination${relationshipVisibilityClass(relationship.focus)} is-${relationship.focus} relation-${relationship.connectionClass}`}
+                style={
+                  {
+                    stroke: relationship.colors[
+                      relationship.colors.length - 1
                     ],
-                  }}
-                >
-                  {!reducedMotion && (
-                    <animateMotion
-                      dur={`${7.5 + (relationshipIndex % 5) * 0.8}s`}
-                      begin={`${-(relationshipIndex * 0.47 + particleIndex * 3.1)}s`}
-                      repeatCount="indefinite"
-                    >
-                      <mpath href={`#relationship-${relationship.id}`} />
-                    </animateMotion>
-                  )}
-                </circle>
-              ))}
+                    "--relationship-weight": relationship.strength,
+                    "--relationship-effective":
+                      relationship.effectiveStrength,
+                  } as CSSProperties
+                }
+              />
+              <circle
+                className={`relationship-particle${relationshipVisibilityClass(relationship.focus)} is-${relationship.focus}`}
+                r={1.1 + relationship.strength * 0.9}
+                style={{
+                  fill: relationship.colors[
+                    relationshipIndex % relationship.colors.length
+                  ],
+                }}
+              >
+                {!reducedMotion && (
+                  <animateMotion
+                    dur={`${10.5 - relationship.strength * 4.2}s`}
+                    begin={`${-(relationshipIndex * 0.53)}s`}
+                    repeatCount="indefinite"
+                  >
+                    <mpath href={`#relationship-${relationship.id}`} />
+                  </animateMotion>
+                )}
+              </circle>
             </g>
           ))}
         </g>
@@ -1200,6 +1475,7 @@ export function LivingMapScene({
               activeLensIds.length > 0 &&
               lensRelevance(node, activeLensIds) > 0.42;
             const interactive = node.inspectable;
+            const explorable = Boolean(node.route);
             return (
               <g
                 key={node.id}
@@ -1218,12 +1494,19 @@ export function LivingMapScene({
                 tabIndex={interactive ? 0 : undefined}
                 aria-label={
                   interactive
-                    ? `${node.publicLabel}. Press Space to pin or Enter to explore.`
+                    ? explorable
+                      ? `${node.publicLabel}. Press Space to pin or Enter to explore.`
+                      : `${node.publicLabel}. Press Space to pin.`
                     : undefined
                 }
                 aria-hidden={interactive ? undefined : true}
                 onPointerDown={
-                  interactive ? (event) => event.stopPropagation() : undefined
+                  interactive
+                    ? (event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                      }
+                    : undefined
                 }
                 onPointerEnter={
                   interactive
@@ -1245,7 +1528,7 @@ export function LivingMapScene({
                     : undefined
                 }
                 onDoubleClick={
-                  interactive
+                  explorable
                     ? (event) => {
                         event.stopPropagation();
                         exploreNode(node);
@@ -1342,15 +1625,98 @@ export function LivingMapScene({
             <ArrowLeft aria-hidden="true" />
             <span className="sr-only">Return to the sky</span>
           </button>
-          <h1>{centeredNode.publicLabel}</h1>
+          <div className="world-identity">
+            <h1>{centeredNode.publicLabel}</h1>
+            {centeredSubstance?.period && (
+              <p className="world-period">{centeredSubstance.period}</p>
+            )}
+            {centeredSubstance?.summary && (
+              <p className="world-summary">{centeredSubstance.summary}</p>
+            )}
+          </div>
         </div>
+      )}
+
+      {mode === "world" && centeredNode?.id === "life-of-pie" && (
+        <LifeOfPiePrototype activeLensIds={activeLensIds} />
       )}
 
       {mode === "world" && centeredNode && (
         <WorldResources node={centeredNode} />
       )}
 
-      {selectedNode && mode === "sky" && (
+      <aside
+        className={[
+          "discovery-panel",
+          hoveredRelationship ? "is-relationship" : discoveryNode ? "is-node" : "is-idle",
+        ]
+          .filter(Boolean)
+          .join(" ")}
+        aria-live="polite"
+      >
+        {hoveredRelationship ? (
+          <>
+            <span className="discovery-kicker">
+              Connection · {relationshipKindLabel(hoveredRelationship.kind)}
+            </span>
+            <strong>
+              {AUTHORED_BY_ID.get(hoveredRelationship.sourceId)?.publicLabel ??
+                hoveredRelationship.sourceId}
+              {" → "}
+              {AUTHORED_BY_ID.get(hoveredRelationship.targetId)?.publicLabel ??
+                hoveredRelationship.targetId}
+            </strong>
+            <p>
+              {relationshipBrief(
+                hoveredRelationship,
+                AUTHORED_BY_ID.get(hoveredRelationship.sourceId)?.publicLabel ??
+                  hoveredRelationship.sourceId,
+                AUTHORED_BY_ID.get(hoveredRelationship.targetId)?.publicLabel ??
+                  hoveredRelationship.targetId,
+              )}
+            </p>
+            <div className="discovery-metrics">
+              <span>{hoveredRelationship.connectionClass} link</span>
+              <span>{Math.round(hoveredRelationship.strength * 100)}% strength</span>
+              <span>{Math.round(hoveredRelationship.confidence * 100)}% confidence</span>
+            </div>
+            <small>
+              Lenses: {hoveredRelationship.lensChannels
+                .map(
+                  (lensId) =>
+                    LENSES.find((lens) => lens.id === lensId)?.shortName ?? lensId,
+                )
+                .join(" · ")}
+            </small>
+          </>
+        ) : discoveryNode ? (
+          <>
+            <span className="discovery-kicker">
+              {discoveryNode.tier === "authored" ? "World" : "Signal"}
+            </span>
+            <strong>{discoveryNode.publicLabel}</strong>
+            <p>
+              {NODE_SYNTHESIS[discoveryNode.id] ??
+                discoverySubstance?.summary ??
+                "A body in Walter’s living map. Hover its connecting lines to see why it belongs here."}
+            </p>
+            <small>
+              Hover a connection to inspect its direction, meaning, strength, and lenses.
+            </small>
+          </>
+        ) : (
+          <>
+            <span className="discovery-kicker">Discovery</span>
+            <strong>Read the map</strong>
+            <p>
+              Hover a world or a connecting line to see what it is and why the connection exists.
+            </p>
+            <small>Pin and zoom when something earns a closer look.</small>
+          </>
+        )}
+      </aside>
+
+      {selectedNode?.route && mode === "sky" && (
         <button
           ref={previewRef}
           type="button"

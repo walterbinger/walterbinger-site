@@ -129,6 +129,7 @@ export interface CelestialNode {
   internalLabel?: string;
   basePosition: Vector3;
   lensWeights: LensWeights;
+  contentMass: number;
   importance: number;
   inspectable: boolean;
   route?: string;

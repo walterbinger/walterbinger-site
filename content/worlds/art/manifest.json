@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "art",
+  "slug": "art",
+  "title": "Art",
+  "status": "seeded",
+  "sourceLocations": [
+    "Casting hand archive",
+    "Senior thesis table archive",
+    "Constellation Asset Registry"
+  ],
+  "curationNotes": [
+    "Existing personal artifacts outrank invented umbrella art."
+  ]
+}

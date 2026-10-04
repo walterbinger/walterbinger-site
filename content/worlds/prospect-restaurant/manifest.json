@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "prospect-restaurant",
+  "slug": "prospect-restaurant",
+  "title": "Prospect",
+  "status": "seeded",
+  "sourceLocations": [
+    "Walter-Binger-CV-2026.pdf",
+    "Walter-Binger-Operations-Resume.pdf"
+  ],
+  "curationNotes": [
+    "Connect the buildout, opening, kitchen, bar, floor, and management record."
+  ]
+}

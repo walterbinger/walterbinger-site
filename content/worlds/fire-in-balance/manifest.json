@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "fire-in-balance",
+  "slug": "fire-in-balance",
+  "title": "Fire in Balance",
+  "status": "intake",
+  "sourceLocations": [
+    "Fire in Balance installation archive",
+    "Private Facebook export"
+  ],
+  "curationNotes": [
+    "Publish only approved images and document collaborators and rights before release."
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "pitzer-studio-art",
+  "slug": "pitzer-studio-art",
+  "title": "Pitzer / Studio Art",
+  "status": "seeded",
+  "sourceLocations": [
+    "Walter-Binger-CV-2026.pdf",
+    "Casting hand archive",
+    "Senior thesis table archive"
+  ],
+  "curationNotes": [
+    "Use Walter's actual college artifacts and process photographs."
+  ]
+}

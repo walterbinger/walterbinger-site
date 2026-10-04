@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "secret-garden-tour",
+  "slug": "secret-garden-tour",
+  "title": "The Secret Garden",
+  "status": "seeded",
+  "sourceLocations": [
+    "Walter-Binger-CV-2026.pdf"
+  ],
+  "curationNotes": [
+    "Connect performance, ensemble work, travel, sound, and early professional experience."
+  ]
+}

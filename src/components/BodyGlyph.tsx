@@ -21,8 +21,9 @@ function PlaceholderGlyph({ glyphKey }: { glyphKey?: string }) {
     case "archive":
       return (
         <>
-          <path {...sharedStroke} d="M-20-22h30l12 12v34h-42Z" />
-          <path {...sharedStroke} d="M10-22v13h12M-12-2h24M-12 7h20M-12 16H6" />
+          <path {...sharedStroke} d="M-25-13h24M-28-3H2M-22 7H0M-14 17H4" />
+          <circle {...sharedStroke} cx="13" cy="-2" r="10" />
+          <path {...sharedStroke} d="m20 6 10 10M8-2h10M13-7v10" />
         </>
       );
     case "bridge":
@@ -63,8 +64,9 @@ function PlaceholderGlyph({ glyphKey }: { glyphKey?: string }) {
     case "doorway":
       return (
         <>
-          <path {...sharedStroke} d="M-25 27V-25h50v52M-14 27V-14h28v41" />
-          <path {...sharedStroke} d="M-30 28h60M-6 7q6 8 12 0M0-3v18" />
+          <path {...sharedStroke} d="M-27 28V-3C-27-20-16-30 0-30S27-20 27-3v31" />
+          <path {...sharedStroke} d="M-15 28V-1C-15-11-9-18 0-18S15-11 15-1v29" />
+          <path {...sharedStroke} d="M-33 28h66M-7 8q7 9 14 0M0-3v19" />
         </>
       );
     case "balance":
@@ -116,10 +118,57 @@ function PlaceholderGlyph({ glyphKey }: { glyphKey?: string }) {
     case "field-tools":
       return (
         <>
-          <path {...sharedStroke} d="M-29-21h58v42h-58Z" />
-          <path {...sharedStroke} d="M-20-11h12M-20-2H3M-20 7h18" />
-          <circle {...sharedStroke} cx="17" cy="-9" r="5" />
-          <path {...sharedStroke} d="M12 7h10M17 2v10M-8 27h16M0 21v6" />
+          <path {...sharedStroke} d="M-28-15h18M-30-4h27M-25 7h16" />
+          <circle {...sharedStroke} cx="16" cy="-12" r="6" />
+          <path {...sharedStroke} d="M16-28v10M16-6V8M0-12h10M22-12h10" />
+          <path {...sharedStroke} d="M-8 25C0 13 7 11 16 8M-15 27h14M-8 20v7" />
+        </>
+      );
+    case "life-of-pie":
+      return (
+        <>
+          <ellipse {...sharedStroke} rx="34" ry="25" transform="rotate(-5)" />
+          <ellipse {...sharedStroke} rx="28" ry="19" transform="rotate(3)" />
+          <path {...sharedStroke} d="M-30 9C-18 14-5 11 5 9S22 10 30 4" />
+          <path {...sharedStroke} d="M-24-12c7-3 13-1 18 2M8-16c5 1 9 4 12 9M-18 1c4 2 9 1 13-1M11 3c5-2 10 0 13 4" />
+          <path {...sharedStroke} d="M-29-3q3-5 7-6M-3 14q5-3 10-2M21-7q4 2 6 6" />
+          <circle {...sharedStroke} cx="-14" cy="-6" r="2.3" />
+          <circle {...sharedStroke} cx="5" cy="-11" r="1.7" />
+          <circle {...sharedStroke} cx="18" cy="10" r="2.7" />
+          <circle {...sharedStroke} cx="-22" cy="8" r="1.5" />
+          <path {...sharedStroke} d="M-35 17q15 9 33 8t37-10" />
+        </>
+      );
+    case "concept-art":
+      return (
+        <>
+          <path {...sharedStroke} d="M-27 18C-16 2-15-20-2-26 9-31 10-8 3 2-4 13 4 24 18 20" />
+          <path {...sharedStroke} d="M-19 7c8 3 13 9 13 18M8-18l15-8M11-11l19 1M15-3l13 8" />
+          <circle {...sharedStroke} cx="-2" cy="-4" r="3" />
+        </>
+      );
+    case "concept-craft":
+      return (
+        <>
+          <path {...sharedStroke} d="M-25 21 8-25M-16 25 18-22M-25 21l9 4M8-25l10 3" />
+          <path {...sharedStroke} d="M-8-8c8 8 16 12 28 13M-18 7c9 3 16 8 22 17" />
+          <circle {...sharedStroke} cx="21" cy="7" r="5" />
+        </>
+      );
+    case "concept-care":
+      return (
+        <>
+          <path {...sharedStroke} d="M-31 8C-20 25-7 29 0 19M31 8C20 25 7 29 0 19" />
+          <path {...sharedStroke} d="M-31 8C-24-3-17-8-8-6M31 8C24-3 17-8 8-6" />
+          <path {...sharedStroke} d="M0 15C-18 2-14-14-4-14 1-14 3-10 4-7 6-12 10-15 15-12 24-5 16 7 0 15Z" />
+        </>
+      );
+    case "concept-service":
+      return (
+        <>
+          <path {...sharedStroke} d="M-29 22h18V9H5V-5h18v-15" />
+          <path {...sharedStroke} d="m14-13 9-7 6 10M-23-4c8-9 15-9 22 0M-17-12v16M-8-12V4" />
+          <circle {...sharedStroke} cx="-15" cy="-19" r="5" />
         </>
       );
     default:
@@ -154,6 +203,34 @@ export function BodyGlyph({
           y="-39"
           width="86"
           height="78"
+          preserveAspectRatio="xMidYMid meet"
+        />
+      </g>
+    );
+  }
+
+  if (node.glyphKey === "life-of-pie") {
+    return (
+      <g
+        className={`body-glyph body-glyph--image body-glyph--life-of-pie${active ? " is-spectral" : ""}${selected ? " is-selected" : ""}`}
+        style={style}
+      >
+        <image
+          className="life-of-pie-map-sketch"
+          href={`${import.meta.env.BASE_URL}assets/source/life-of-pie/stickers/grandma-sketch.png`}
+          x="-45"
+          y="-37"
+          width="90"
+          height="74"
+          preserveAspectRatio="xMidYMid meet"
+        />
+        <image
+          className="life-of-pie-map-photo"
+          href={`${import.meta.env.BASE_URL}assets/source/life-of-pie/stickers/grandma-pie.png`}
+          x="-45"
+          y="-37"
+          width="90"
+          height="74"
           preserveAspectRatio="xMidYMid meet"
         />
       </g>

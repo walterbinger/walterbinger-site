@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "life-of-pie",
+  "slug": "life-of-pie",
+  "title": "Life of Pie",
+  "status": "seeded",
+  "sourceLocations": [
+    "Google Drive/02 WalterBinger.com/Website Photo Candidates/Life of Pie",
+    "Google Drive/02 WalterBinger.com/Source Maps & Intake/WALTRON Intake — Life of Pie Pilot & Breadcrumb Registry"
+  ],
+  "presentation": {
+    "status": "prototype",
+    "destination": "presentations/",
+    "sourceMaterial": [
+      "whole-pie photographs",
+      "slice and process photographs",
+      "working source map",
+      "travel and memory breadcrumbs"
+    ]
+  },
+  "curationNotes": [
+    "Keep Life of Pie, Tasty Meals & Cooking Memories, and Empanadas Son! as separate source worlds.",
+    "Do not publish private people, quotes, or source photographs without item-level approval.",
+    "Current Local Lab prototype is The Same Slice / Different Gravity; it is not canon-locked."
+  ]
+}

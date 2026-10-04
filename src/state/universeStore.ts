@@ -225,7 +225,12 @@ export function hydrateRouteFromHash(): void {
   const store = useUniverseStore.getState();
 
   if (hash === "/sky") {
-    useUniverseStore.setState({ mode: "sky" });
+    useUniverseStore.setState({
+      mode: "sky",
+      hoveredId: null,
+      selectedId: null,
+      centeredId: null,
+    });
     return;
   }
   if (hash.startsWith("/world/")) {
@@ -246,7 +251,12 @@ export function hydrateRouteFromHash(): void {
     return;
   }
   if (hash === "") {
-    useUniverseStore.setState({ mode: "sky" });
+    useUniverseStore.setState({
+      mode: "sky",
+      hoveredId: null,
+      selectedId: null,
+      centeredId: null,
+    });
     return;
   }
   if (hash === "/") {

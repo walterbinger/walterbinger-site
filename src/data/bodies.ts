@@ -1,9 +1,11 @@
-import { generateAmbientStars, generateEmergingBodies } from "../domain/ambient";
+import { generateAmbientStars } from "../domain/ambient";
 import {
   type CelestialNode,
   type LensWeights,
   type Vector3,
 } from "../domain/cosmology";
+import { DIRECTED_RELATIONSHIPS } from "./relationships";
+import { substancePhysics } from "./substance";
 
 const sourceAsset = (path: string) =>
   `${import.meta.env.BASE_URL}assets/source/${path}`;
@@ -29,14 +31,22 @@ interface AuthoredBodyInput {
   position: Vector3;
   lensWeights: LensWeights;
   importance: number;
-  route: string;
+  route?: string;
   glyphKey: string;
   relatedNodeIds: string[];
   motionClass: CelestialNode["motionClass"];
+  inspectable?: boolean;
   artifacts?: CelestialNode["artifacts"];
 }
 
 function authoredBody(input: AuthoredBodyInput): CelestialNode {
+  const physics = substancePhysics(input.id);
+  const causalNeighbors = DIRECTED_RELATIONSHIPS.flatMap((relationship) => {
+    if (relationship.sourceId === input.id) return [relationship.targetId];
+    if (relationship.targetId === input.id) return [relationship.sourceId];
+    return [];
+  });
+
   return {
     id: input.id,
     kind: input.kind,
@@ -45,13 +55,14 @@ function authoredBody(input: AuthoredBodyInput): CelestialNode {
     publicLabel: input.label,
     internalLabel: input.label,
     basePosition: input.position,
-    lensWeights: input.lensWeights,
-    importance: input.importance,
-    inspectable: true,
+    lensWeights: physics.lensWeights,
+    contentMass: physics.contentMass,
+    importance: physics.importance,
+    inspectable: input.inspectable ?? true,
     route: input.route,
     glyphKey: input.glyphKey,
     motionClass: input.motionClass,
-    relatedNodeIds: input.relatedNodeIds,
+    relatedNodeIds: [...new Set([...input.relatedNodeIds, ...causalNeighbors])],
     projectIds: input.kind === "project" ? [input.id] : [],
     conceptIds: input.kind === "concept" ? [input.id] : [],
     artifactIds: input.artifacts?.map((artifact) => artifact.id) ?? [],
@@ -61,7 +72,22 @@ function authoredBody(input: AuthoredBodyInput): CelestialNode {
   };
 }
 
-export const AUTHORED_BODIES: readonly CelestialNode[] = [
+function sourceBackedBody(
+  input: Omit<
+    AuthoredBodyInput,
+    "lensWeights" | "importance" | "relatedNodeIds"
+  >,
+): CelestialNode {
+  const physics = substancePhysics(input.id);
+  return authoredBody({
+    ...input,
+    lensWeights: physics.lensWeights,
+    importance: physics.importance,
+    relatedNodeIds: [],
+  });
+}
+
+const CORE_BODIES: readonly CelestialNode[] = [
   authoredBody({
     id: "cv-archive",
     label: "Professional Archive",
@@ -148,6 +174,9 @@ export const AUTHORED_BODIES: readonly CelestialNode[] = [
       "hospitality",
       "thinking-in-4d",
       "field-tools",
+      "craft",
+      "care",
+      "service",
     ],
     motionClass: "stable",
   }),
@@ -192,7 +221,14 @@ export const AUTHORED_BODIES: readonly CelestialNode[] = [
     importance: 1,
     route: "empanadas-son",
     glyphKey: "empanadas-sun",
-    relatedNodeIds: ["brooklyn", "argentina", "hospitality"],
+    relatedNodeIds: [
+      "brooklyn",
+      "argentina",
+      "hospitality",
+      "art",
+      "craft",
+      "care",
+    ],
     motionClass: "orbital",
     artifacts: [
       {
@@ -221,6 +257,71 @@ export const AUTHORED_BODIES: readonly CelestialNode[] = [
         src: sourceAsset("empanadas-son/apple-pie.png"),
       },
     ],
+  }),
+  authoredBody({
+    id: "life-of-pie",
+    label: "Life of Pie",
+    kind: "world",
+    state: "world",
+    position: { x: -520, y: -160, z: 960 },
+    lensWeights: weights(0.95, 0.96, 1, 0.88, 0.72, 0.92, 0.9, 0.88),
+    importance: 0.94,
+    route: "life-of-pie",
+    glyphKey: "life-of-pie",
+    relatedNodeIds: [],
+    motionClass: "stable",
+  }),
+  authoredBody({
+    id: "art",
+    label: "Art",
+    kind: "concept",
+    state: "star",
+    position: { x: -90, y: -520, z: 210 },
+    lensWeights: weights(0.46, 0.96, 0.64, 0.42, 0.76, 0.5, 0.86, 1),
+    importance: 0.72,
+    route: "art",
+    glyphKey: "concept-art",
+    relatedNodeIds: ["empanadas-son"],
+    motionClass: "reflective",
+  }),
+  authoredBody({
+    id: "craft",
+    label: "Craft",
+    kind: "concept",
+    state: "star",
+    position: { x: 610, y: -580, z: 180 },
+    lensWeights: weights(0.66, 1, 0.78, 0.88, 0.48, 0.46, 0.58, 0.62),
+    importance: 0.8,
+    route: "craft",
+    glyphKey: "concept-craft",
+    relatedNodeIds: ["empanadas-son", "healthcare"],
+    motionClass: "stable",
+  }),
+  authoredBody({
+    id: "care",
+    label: "Care",
+    kind: "concept",
+    state: "star",
+    position: { x: 760, y: 160, z: 360 },
+    lensWeights: weights(1, 0.58, 0.54, 0.9, 0.52, 0.38, 0.84, 0.7),
+    importance: 0.84,
+    route: "care",
+    glyphKey: "concept-care",
+    relatedNodeIds: ["empanadas-son", "healthcare"],
+    motionClass: "pulsing",
+  }),
+  authoredBody({
+    id: "service",
+    label: "Service",
+    kind: "concept",
+    state: "star",
+    position: { x: 1160, y: -330, z: 320 },
+    lensWeights: weights(0.9, 0.66, 0.42, 0.96, 0.5, 0.52, 0.92, 0.58),
+    importance: 0.78,
+    route: "service",
+    glyphKey: "concept-service",
+    relatedNodeIds: ["healthcare"],
+    motionClass: "stable",
   }),
   authoredBody({
     id: "library-writing",
@@ -281,11 +382,147 @@ export const AUTHORED_BODIES: readonly CelestialNode[] = [
   }),
 ] as const;
 
-export const EMERGING_BODIES = generateEmergingBodies(16);
+export const PROJECT_BODIES: readonly CelestialNode[] = [
+  sourceBackedBody({
+    id: "hcsg-district-operations",
+    label: "HCSG District Operations",
+    kind: "project",
+    state: "star",
+    position: { x: 1260, y: 330, z: 170 },
+    route: "hcsg-district-operations",
+    glyphKey: "balance",
+    motionClass: "stable",
+  }),
+  sourceBackedBody({
+    id: "mealtracker-pcc-rollout",
+    label: "MealTracker / PointClickCare",
+    kind: "project",
+    state: "star",
+    position: { x: 880, y: 210, z: 760 },
+    route: "mealtracker-pcc-rollout",
+    glyphKey: "field-tools",
+    motionClass: "orbital",
+  }),
+  sourceBackedBody({
+    id: "livewell-turnaround",
+    label: "LiveWell Turnaround",
+    kind: "project",
+    state: "star",
+    position: { x: 1320, y: -360, z: 130 },
+    route: "livewell-turnaround",
+    glyphKey: "balance",
+    motionClass: "stable",
+  }),
+  sourceBackedBody({
+    id: "island-nursing-home",
+    label: "Island Nursing Home",
+    kind: "project",
+    state: "star",
+    position: { x: -170, y: 1080, z: 650 },
+    route: "island-nursing-home",
+    glyphKey: "concept-care",
+    motionClass: "pulsing",
+  }),
+  sourceBackedBody({
+    id: "circus-restobar",
+    label: "Circus RestoBar",
+    kind: "project",
+    state: "star",
+    position: { x: 550, y: 1050, z: -520 },
+    route: "circus-restobar",
+    glyphKey: "doorway",
+    motionClass: "orbital",
+  }),
+  sourceBackedBody({
+    id: "prospect-restaurant",
+    label: "Prospect",
+    kind: "project",
+    state: "star",
+    position: { x: -780, y: 570, z: -650 },
+    route: "prospect-restaurant",
+    glyphKey: "doorway",
+    motionClass: "orbital",
+  }),
+  sourceBackedBody({
+    id: "nimbus-installation",
+    label: "Nimbus",
+    kind: "project",
+    state: "star",
+    position: { x: -230, y: -120, z: -1080 },
+    route: "nimbus-installation",
+    glyphKey: "concept-art",
+    motionClass: "reflective",
+  }),
+  sourceBackedBody({
+    id: "fire-in-balance",
+    label: "Fire in Balance",
+    kind: "project",
+    state: "star",
+    position: { x: -610, y: 40, z: -980 },
+    route: "fire-in-balance",
+    glyphKey: "concept-art",
+    motionClass: "pulsing",
+  }),
+  sourceBackedBody({
+    id: "construction-cabinetry",
+    label: "Construction / Cabinetry",
+    kind: "project",
+    state: "star",
+    position: { x: 330, y: -690, z: 870 },
+    route: "construction-cabinetry",
+    glyphKey: "concept-craft",
+    motionClass: "stable",
+  }),
+  sourceBackedBody({
+    id: "bio-benin",
+    label: "Bio-Benin",
+    kind: "project",
+    state: "star",
+    position: { x: 260, y: 520, z: 1080 },
+    route: "bio-benin",
+    glyphKey: "play",
+    motionClass: "orbital",
+  }),
+  sourceBackedBody({
+    id: "pitzer-studio-art",
+    label: "Pitzer / Studio Art",
+    kind: "project",
+    state: "star",
+    position: { x: -410, y: -660, z: 810 },
+    route: "pitzer-studio-art",
+    glyphKey: "concept-art",
+    motionClass: "reflective",
+  }),
+  sourceBackedBody({
+    id: "secret-garden-tour",
+    label: "The Secret Garden",
+    kind: "project",
+    state: "star",
+    position: { x: -1210, y: -430, z: -620 },
+    route: "secret-garden-tour",
+    glyphKey: "wave",
+    motionClass: "pulsing",
+  }),
+  sourceBackedBody({
+    id: "argentiere-france",
+    label: "Argentière, France",
+    kind: "project",
+    state: "star",
+    position: { x: 760, y: 980, z: 680 },
+    route: "argentiere-france",
+    glyphKey: "doorway",
+    motionClass: "orbital",
+  }),
+] as const;
+
+export const AUTHORED_BODIES: readonly CelestialNode[] = [
+  ...CORE_BODIES,
+  ...PROJECT_BODIES,
+];
+
 export const AMBIENT_BODIES = generateAmbientStars(64);
 
 export const ALL_BODIES: readonly CelestialNode[] = [
   ...AUTHORED_BODIES,
-  ...EMERGING_BODIES,
   ...AMBIENT_BODIES,
 ];

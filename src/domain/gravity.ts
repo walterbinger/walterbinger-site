@@ -15,6 +15,10 @@ import {
   type LensId,
   type Vector3,
 } from "./cosmology";
+import {
+  effectiveRelationshipStrength,
+  type DirectedRelationship,
+} from "./relationships";
 
 export const LENS_DIRECTIONS: Record<LensId, Vector3> = {
   red: { x: -0.82, y: -0.42, z: 0.38 },
@@ -45,12 +49,14 @@ interface GravityLink extends SimulationLinkDatum<GravityNode> {
 interface GravityContext {
   activeLensIds: readonly LensId[];
   anchorTargets: ReadonlyMap<string, Vector3>;
+  attentionIds: ReadonlySet<string>;
 }
 
 export interface GravitySystem {
   setContext(
     activeLensIds: readonly LensId[],
     anchorTargets?: ReadonlyMap<string, Vector3>,
+    attentionIds?: ReadonlySet<string>,
   ): void;
   tick(deltaMilliseconds: number): void;
   position(nodeId: string): Vector3 | undefined;
@@ -91,7 +97,14 @@ export function relationshipAffinity(
   const similarity =
     dot / (Math.sqrt(fromMagnitude) * Math.sqrt(toMagnitude) || 1);
   const importance = (from.importance + to.importance) / 2;
-  return Math.max(0, Math.min(1, 0.18 + similarity * 0.5 + importance * 0.32));
+  const substance = (from.contentMass + to.contentMass) / 2;
+  return Math.max(
+    0,
+    Math.min(
+      1,
+      0.12 + similarity * 0.46 + importance * 0.22 + substance * 0.2,
+    ),
+  );
 }
 
 export function gravityTargetForNode(
@@ -141,7 +154,8 @@ export function gravityTargetForNode(
   const radius =
     tierFloor +
     (1 - relevance) * tierRange +
-    (1 - node.importance) * (node.tier === "authored" ? 130 : 60);
+    (1 - node.importance) * (node.tier === "authored" ? 130 : 60) -
+    node.contentMass * (node.tier === "authored" ? 105 : 24);
 
   return {
     x: direction.x * radius,
@@ -150,17 +164,103 @@ export function gravityTargetForNode(
   };
 }
 
-function createLinks(nodes: readonly CelestialNode[]): GravityLink[] {
+function createLinks(
+  nodes: readonly CelestialNode[],
+  directedRelationships: readonly DirectedRelationship[],
+): GravityLink[] {
   const byId = new Map(nodes.map((node) => [node.id, node]));
+  const directedPairs = new Set(
+    directedRelationships.map((relationship) =>
+      [relationship.sourceId, relationship.targetId].sort().join("--"),
+    ),
+  );
   return nodes.flatMap((node) =>
     node.relatedNodeIds
-      .filter((relatedId) => node.id < relatedId && byId.has(relatedId))
+      .filter(
+        (relatedId) =>
+          node.id < relatedId &&
+          byId.has(relatedId) &&
+          !directedPairs.has([node.id, relatedId].sort().join("--")),
+      )
       .map((relatedId) => ({
         source: node.id,
         target: relatedId,
         affinity: relationshipAffinity(node, byId.get(relatedId)!),
       })),
   );
+}
+
+function createCausalForce(
+  context: GravityContext,
+  relationships: readonly DirectedRelationship[],
+): Force<GravityNode> {
+  let byId = new Map<string, GravityNode>();
+  const classStrength = {
+    direct: 1,
+    partial: 0.68,
+    loose: 0.42,
+  } as const;
+  const classDistance = {
+    direct: 245,
+    partial: 360,
+    loose: 500,
+  } as const;
+
+  const force = ((alpha: number) => {
+    for (const relationship of relationships) {
+      const source = byId.get(relationship.sourceId);
+      const target = byId.get(relationship.targetId);
+      if (!source || !target) {
+        continue;
+      }
+
+      const dx = source.x - target.x;
+      const dy = source.y - target.y;
+      const dz = source.z - target.z;
+      const distance = Math.hypot(dx, dy, dz) || 1;
+      const desiredDistance =
+        classDistance[relationship.connectionClass] +
+        (1 - relationship.strength) * 180 -
+        ((source.source.contentMass + target.source.contentMass) / 2) * 54;
+      const extension = Math.max(0, distance - desiredDistance);
+      if (extension === 0) {
+        continue;
+      }
+
+      const effectiveStrength = effectiveRelationshipStrength(
+        relationship,
+        context.activeLensIds,
+        context.attentionIds,
+      );
+      const pull = Math.min(
+        11,
+        extension *
+          (0.006 + effectiveStrength * 0.012) *
+          classStrength[relationship.connectionClass] *
+          (0.72 + target.source.contentMass * 0.5) *
+          alpha,
+      );
+      const unitX = dx / distance;
+      const unitY = dy / distance;
+      const unitZ = dz / distance;
+
+      target.vx += unitX * pull;
+      target.vy += unitY * pull;
+      target.vz += unitZ * pull;
+
+      const sourceReaction =
+        (0.06 + (1 - relationship.strength) * 0.05) /
+        (0.68 + source.source.contentMass * 0.62);
+      source.vx -= unitX * pull * sourceReaction;
+      source.vy -= unitY * pull * sourceReaction;
+      source.vz -= unitZ * pull * sourceReaction;
+    }
+  }) as Force<GravityNode>;
+
+  force.initialize = (initializedNodes) => {
+    byId = new Map(initializedNodes.map((node) => [node.id, node]));
+  };
+  return force;
 }
 
 function createTargetForce(
@@ -224,6 +324,7 @@ function createVelocityLimitForce(): Force<GravityNode> {
 
 export function createGravitySystem(
   celestialNodes: readonly CelestialNode[],
+  directedRelationships: readonly DirectedRelationship[] = [],
 ): GravitySystem {
   const gravityNodes: GravityNode[] = celestialNodes.map((node) => ({
     id: node.id,
@@ -239,8 +340,9 @@ export function createGravitySystem(
   const context: GravityContext = {
     activeLensIds: [],
     anchorTargets: new Map(),
+    attentionIds: new Set(),
   };
-  const links = createLinks(celestialNodes);
+  const links = createLinks(celestialNodes, directedRelationships);
   const linkForce = forceLink<GravityNode, GravityLink>(links)
     .id((node) => node.id)
     .distance((link) => 250 + (1 - link.affinity) * 360)
@@ -249,9 +351,9 @@ export function createGravitySystem(
   const collisionForce = forceCollide<GravityNode>()
     .radius((node) =>
       node.source.tier === "authored"
-        ? 112
+        ? 84 + node.source.contentMass * 48
         : node.source.tier === "emerging"
-          ? 42
+          ? 34 + node.source.contentMass * 28
           : 9,
     )
     .strength(0.72)
@@ -259,9 +361,9 @@ export function createGravitySystem(
   const chargeForce = forceManyBody<GravityNode>()
     .strength((node) =>
       node.source.tier === "authored"
-        ? -420
+        ? -280 - node.source.contentMass * 220
         : node.source.tier === "emerging"
-          ? -34
+          ? -24 - node.source.contentMass * 42
           : -2.5,
     )
     .distanceMin(24)
@@ -272,6 +374,7 @@ export function createGravitySystem(
     GravityLink
   >(gravityNodes, 3)
     .force("target", createTargetForce(context))
+    .force("causal", createCausalForce(context, directedRelationships))
     .force("links", linkForce)
     .force("collision", collisionForce)
     .force("charge", chargeForce)
@@ -283,9 +386,14 @@ export function createGravitySystem(
     .stop();
 
   return {
-    setContext(activeLensIds, anchorTargets = new Map()) {
+    setContext(
+      activeLensIds,
+      anchorTargets = new Map(),
+      attentionIds = new Set(),
+    ) {
       context.activeLensIds = [...activeLensIds];
       context.anchorTargets = anchorTargets;
+      context.attentionIds = attentionIds;
       linkForce.strength((link) =>
         activeLensIds.length > 0 ? 0.025 + link.affinity * 0.08 : 0,
       );
@@ -293,9 +401,9 @@ export function createGravitySystem(
         activeLensIds.length === 0
           ? 0
           : node.source.tier === "authored"
-            ? -420
+            ? -280 - node.source.contentMass * 220
             : node.source.tier === "emerging"
-              ? -34
+              ? -24 - node.source.contentMass * 42
               : -2.5,
       );
       simulation.alpha(Math.max(simulation.alpha(), 0.78));

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "service",
+  "slug": "service",
+  "title": "Service",
+  "status": "seeded",
+  "sourceLocations": [
+    "Professional archive",
+    "Customer-success resume"
+  ],
+  "curationNotes": [
+    "Connect listening, translation, maintenance, and follow-through across sectors."
+  ]
+}

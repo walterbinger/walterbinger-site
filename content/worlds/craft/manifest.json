@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "craft",
+  "slug": "craft",
+  "title": "Craft",
+  "status": "seeded",
+  "sourceLocations": [
+    "Professional archive",
+    "Tables and workshop archive"
+  ],
+  "curationNotes": [
+    "Connect material judgment to construction, kitchens, installation, and repair."
+  ]
+}

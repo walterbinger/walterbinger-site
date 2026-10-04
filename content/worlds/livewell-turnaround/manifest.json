@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "livewell-turnaround",
+  "slug": "livewell-turnaround",
+  "title": "LiveWell Turnaround",
+  "status": "seeded",
+  "sourceLocations": [
+    "Walter-Binger-CV-2026.pdf",
+    "Walter-Binger-Operations-Resume.pdf"
+  ],
+  "curationNotes": [
+    "Keep facility details de-identified while preserving the documented scale and recovery."
+  ]
+}

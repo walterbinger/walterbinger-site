@@ -1,6 +1,95 @@
-import type { WorldContentDefinition } from "../domain/content";
+import type {
+  ContentSlot,
+  ResourceReference,
+  WorldContentDefinition,
+} from "../domain/content";
+import type {
+  SourceKind,
+  SourceReference as EvidenceSourceReference,
+  SubstanceRecord,
+} from "../domain/substance";
+import {
+  SOURCE_REFERENCES,
+  SUBSTANCE_RECORDS,
+} from "./substance";
 
-export const WORLD_CONTENT = {
+const SOURCE_INDEX =
+  SOURCE_REFERENCES as Readonly<Record<string, EvidenceSourceReference>>;
+
+function resourceKind(kind: SourceKind): ResourceReference["kind"] {
+  if (kind === "tool-document") return "tool";
+  if (kind === "writing-archive" || kind === "design-canon") return "writing";
+  if (kind === "professional-document") return "document";
+  return "link";
+}
+
+function contentStatus(
+  status: SubstanceRecord["status"],
+): WorldContentDefinition["status"] {
+  if (status === "published") return "published";
+  if (status === "seeded") return "seeded";
+  return "curating";
+}
+
+function generatedContent(
+  substanceRecord: SubstanceRecord,
+): WorldContentDefinition {
+  const resources = substanceRecord.sourceIds.flatMap<ResourceReference>(
+    (sourceId) => {
+      const source = SOURCE_INDEX[sourceId];
+      if (!source?.href || source.visibility !== "public") {
+        return [];
+      }
+      return [
+        {
+          id: `${substanceRecord.nodeId}-${source.id}`,
+          label: source.label,
+          kind: resourceKind(source.kind),
+          href: source.href,
+          description: substanceRecord.summary,
+          external: source.href.startsWith("https://"),
+        },
+      ];
+    },
+  );
+  const slots: ContentSlot[] = [
+    ...substanceRecord.outcomes.map((result) => ({
+      id: `${substanceRecord.nodeId}-${result.id}`,
+      kind: "document" as const,
+      status: "available" as const,
+      label: result.label,
+    })),
+    ...(substanceRecord.artifactCount > 0
+      ? [
+          {
+            id: `${substanceRecord.nodeId}-curated-artifacts`,
+            kind: "artifact" as const,
+            status:
+              substanceRecord.status === "published"
+                ? ("available" as const)
+                : ("curation-needed" as const),
+            label: `${substanceRecord.artifactCount} source artifacts`,
+          },
+        ]
+      : []),
+  ];
+
+  return {
+    nodeId: substanceRecord.nodeId,
+    status: contentStatus(substanceRecord.status),
+    resources,
+    slots,
+  };
+}
+
+const GENERATED_CONTENT = Object.fromEntries(
+  SUBSTANCE_RECORDS.map((substanceRecord) => [
+    substanceRecord.nodeId,
+    generatedContent(substanceRecord),
+  ]),
+) as Record<string, WorldContentDefinition>;
+
+const CURATED_CONTENT: Record<string, WorldContentDefinition> = {
   "field-tools": {
     nodeId: "field-tools",
     status: "curating",
@@ -55,6 +144,14 @@ export const WORLD_CONTENT = {
         description:
           "Working notes on perspective, systems, and what changes when the observer moves.",
       },
+      {
+        id: "thinking-in-4d-cosmology-master",
+        label: "Cosmology & Design Bible — Living Master",
+        kind: "writing",
+        href: "https://docs.google.com/document/d/1lBfT_3gdxaKCt6-fOLVdUgSzFq8Zmh9ZsK4G8WLPis0/edit",
+        description: "The living construction record for this universe.",
+        external: true,
+      },
     ],
     slots: [
       {
@@ -93,10 +190,15 @@ export const WORLD_CONTENT = {
       },
     ],
   },
-} as const satisfies Record<string, WorldContentDefinition>;
+};
+
+export const WORLD_CONTENT: Readonly<Record<string, WorldContentDefinition>> = {
+  ...GENERATED_CONTENT,
+  ...CURATED_CONTENT,
+};
 
 export function getWorldContent(
   nodeId: string,
 ): WorldContentDefinition | undefined {
-  return WORLD_CONTENT[nodeId as keyof typeof WORLD_CONTENT];
+  return WORLD_CONTENT[nodeId];
 }

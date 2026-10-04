@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "nimbus-installation",
+  "slug": "nimbus-installation",
+  "title": "Nimbus",
+  "status": "intake",
+  "sourceLocations": [
+    "Walter-Binger-CV-2026.pdf",
+    "Nimbus / Poetic Kinetics archive",
+    "Private Facebook export"
+  ],
+  "curationNotes": [
+    "Use approved photographs to document rigging, fabrication, sewing, logistics, scale, and collaboration."
+  ]
+}

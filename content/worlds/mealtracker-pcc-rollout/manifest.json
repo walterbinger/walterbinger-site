@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "mealtracker-pcc-rollout",
+  "slug": "mealtracker-pcc-rollout",
+  "title": "MealTracker / PointClickCare",
+  "status": "seeded",
+  "sourceLocations": [
+    "Walter-Binger-CV-2026.pdf",
+    "Walter-Binger-Implementation-Resume.pdf"
+  ],
+  "curationNotes": [
+    "Build a de-identified implementation case around go-live, training, adoption, and follow-through."
+  ]
+}

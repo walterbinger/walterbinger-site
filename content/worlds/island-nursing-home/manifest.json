@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "island-nursing-home",
+  "slug": "island-nursing-home",
+  "title": "Island Nursing Home",
+  "status": "seeded",
+  "sourceLocations": [
+    "Walter-Binger-CV-2026.pdf",
+    "Walter-Binger-Operations-Resume.pdf"
+  ],
+  "curationNotes": [
+    "Center residents, participation, department rebuilding, and crisis response without exposing protected information."
+  ]
+}

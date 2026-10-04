@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "world": "life-of-pie",
+  "status": "working-intake",
+  "sourceFolder": "Google Drive/02 WalterBinger.com/Website Photo Candidates/Life of Pie",
+  "roles": {
+    "satellite-sticker": "Transparent cutout of a whole pie used as an authored orbital body.",
+    "slice-sticker": "Transparent cutout of a slice used as a fragment, chapter marker, or smaller orbiting body.",
+    "archive-photo": "Full rectangular documentary image retained in the archive rather than floated in the world.",
+    "process-texture": "Ingredient/process/detail image used for archive, atmosphere, or texture rather than as a satellite.",
+    "reference-only": "External/reference image used to explain lineage or inspiration; not presented as Walter-made work."
+  },
+  "candidates": [
+    {
+      "file": "2026-09-30 - Pizza - Whole Pie 01 - IMG_8856.jpeg",
+      "sourceFile": "IMG_8856.jpeg",
+      "role": ["satellite-sticker", "archive-photo"],
+      "priority": "high",
+      "notes": "Strong whole-pie silhouette, distinct char, colorful surface. Best current cutout candidate."
+    },
+    {
+      "file": "2026-09-30 - Pizza - Whole Pie 02 - IMG_8881.jpeg",
+      "sourceFile": "IMG_8881.jpeg",
+      "role": ["archive-photo"],
+      "priority": "medium",
+      "notes": "Strong alternate angle of the same pie represented more cleanly by IMG_8882. Keep as archive/beauty evidence rather than a duplicate satellite."
+    },
+    {
+      "file": "2026-09-30 - Pizza - Whole Pie 03 - IMG_8930.jpeg",
+      "sourceFile": "IMG_8930.jpeg",
+      "role": ["archive-photo"],
+      "priority": "medium",
+      "notes": "Cleaner fresh mozzarella/basil pie, but an oven mitt overlaps the crust edge. Great archive image; only promote to sticker if we deliberately reconstruct that edge in an edit pass."
+    },
+    {
+      "file": "2026-09-30 - Pizza - Slice Profile - IMG_8857.jpeg",
+      "sourceFile": "IMG_8857.jpeg",
+      "role": ["slice-sticker", "archive-photo"],
+      "priority": "high",
+      "notes": "Excellent slice profile and crust evidence. Hand should be removed only in a dedicated cutout/edit pass."
+    },
+    {
+      "file": "2026-09-30 - Pizza - Walter with Slice - IMG_8861.jpeg",
+      "sourceFile": "IMG_8861.jpeg",
+      "role": ["archive-photo"],
+      "priority": "medium",
+      "notes": "Great human/context image; not a satellite. Could support an authored story chapter."
+    },
+    {
+      "file": "2026-09-30 - Process - Sliced Heirloom Tomatoes - IMG_8986.jpeg",
+      "sourceFile": "IMG_8986.jpeg",
+      "role": ["process-texture", "archive-photo"],
+      "priority": "medium",
+      "notes": "Beautiful ingredient/process evidence; better as texture or archive material than a body."
+    },
+    {
+      "file": "2026-09-30 - Process - Heirloom Tomatoes - IMG_B3159114.jpeg",
+      "sourceFile": "IMG_B3159114-74DB-4697-AE5F-4B316E15C1DF.jpeg",
+      "role": ["process-texture", "archive-photo"],
+      "priority": "medium",
+      "notes": "Ingredient provenance/process image."
+    },
+    {
+      "file": "2B54B3D3-6771-45FC-B225-CBA4DA85AFE0.jpeg",
+      "role": ["reference-only"],
+      "priority": "high",
+      "notes": "Reference screenshot of the Brooklyn/My Little slice lineage. Keep separate from Walter-made pie archive."
+    },
+    {
+      "file": "2026-09-17 - Pizza - Whole Pie 04 - IMG_8882.jpeg",
+      "role": ["satellite-sticker", "archive-photo"],
+      "priority": "high",
+      "notes": "Visually reviewed. Best angle of this pie for a sticker: full crust silhouette, strong irregularity, colorful spiral/field of toppings. Prefer this over IMG_8881 as the orbital version."
+    },
+    {
+      "file": "2026-09-17 - Pizza - Whole Pie 05 - IMG_8776.jpeg",
+      "role": ["satellite-sticker", "archive-photo"],
+      "priority": "high",
+      "notes": "Visually reviewed. Distinct flatter silhouette with fresh mozzarella, basil, tomato, and dark olives; strong contrast against the other first-pass satellite pies."
+    },
+    {
+      "file": "2026-03-17 - Process - Pizza Dough - IMG_09801F90.jpeg",
+      "role": ["process-texture", "archive-photo"],
+      "priority": "pending-review",
+      "notes": "Potential Hands & Heat artifact; review before placement."
+    },
+    {
+      "file": "Artifact - When It's Good It's Very Good - Sticker.jpeg",
+      "role": ["archive-photo"],
+      "priority": "high",
+      "notes": "Conceptual artifact for the world; preserve as evidence rather than a pie satellite."
+    }
+  ],
+  "firstSatelliteShortlist": [
+    "IMG_8856.jpeg",
+    "IMG_8882.jpeg",
+    "IMG_8776.jpeg"
+  ],
+  "conditionalSatelliteCandidates": [
+    "IMG_8930.jpeg"
+  ],
+  "firstSliceShortlist": [
+    "IMG_8857.jpeg"
+  ],
+  "nextAction": "Create transparent cutouts from the strongest approved whole-pie and slice images, then wire those cutouts into the Life of Pie world. Keep full rectangular originals in the archive layer."
+}

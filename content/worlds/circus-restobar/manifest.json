@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "circus-restobar",
+  "slug": "circus-restobar",
+  "title": "Circus RestoBar",
+  "status": "seeded",
+  "sourceLocations": [
+    "Walter-Binger-CV-2026.pdf",
+    "Argentina photo archive"
+  ],
+  "curationNotes": [
+    "Curate the Spanish-language rebuild, menu, brand, vendors, events, POS, and operating story."
+  ]
+}

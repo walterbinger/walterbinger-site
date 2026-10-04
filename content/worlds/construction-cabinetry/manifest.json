@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "construction-cabinetry",
+  "slug": "construction-cabinetry",
+  "title": "Construction / Cabinetry",
+  "status": "seeded",
+  "sourceLocations": [
+    "Walter-Binger-CV-2026.pdf",
+    "Tables and workshop archive"
+  ],
+  "curationNotes": [
+    "Start with the senior thesis table and the restaurant buildout record."
+  ]
+}

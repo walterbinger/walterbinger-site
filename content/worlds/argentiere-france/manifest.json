@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "argentiere-france",
+  "slug": "argentiere-france",
+  "title": "Argentière, France",
+  "status": "intake",
+  "sourceLocations": [
+    "Walter-Binger-CV-2026.pdf",
+    "Travel photo archive"
+  ],
+  "curationNotes": [
+    "Curate place, food, service, movement, and language without treating it as generic travel content."
+  ]
+}

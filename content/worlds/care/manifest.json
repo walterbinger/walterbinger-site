@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "care",
+  "slug": "care",
+  "title": "Care",
+  "status": "seeded",
+  "sourceLocations": [
+    "Professional archive",
+    "PREP field-kit sources"
+  ],
+  "curationNotes": [
+    "Use de-identified evidence and let care emerge through actions and outcomes."
+  ]
+}

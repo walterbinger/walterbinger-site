@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "hcsg-district-operations",
+  "slug": "hcsg-district-operations",
+  "title": "HCSG District Operations",
+  "status": "seeded",
+  "sourceLocations": [
+    "Walter-Binger-CV-2026.pdf",
+    "Walter-Binger-Operations-Resume.pdf",
+    "Walter-Binger-Implementation-Resume.pdf"
+  ],
+  "curationNotes": [
+    "Use de-identified operating proof: scale, surveys, reopenings, implementation, and leadership development."
+  ]
+}

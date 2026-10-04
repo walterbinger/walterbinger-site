@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "nodeId": "bio-benin",
+  "slug": "bio-benin",
+  "title": "Bio-Benin",
+  "status": "intake",
+  "sourceLocations": [
+    "Walter-Binger-CV-2026.pdf",
+    "Africa soccer tournament archive",
+    "Travel photo archive"
+  ],
+  "curationNotes": [
+    "Curate the board, consulting, hospitality, renovation, community, and collaboration records together."
+  ]
+}
