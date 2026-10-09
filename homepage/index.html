@@ -322,6 +322,16 @@ header{padding-bottom:34px}
 section{padding-top:40px;padding-bottom:40px}
 @media (max-width:760px){.profile-grid{grid-template-columns:1fr 1fr;max-width:none}.profile-card{grid-column:span 1}.profile-full{grid-column:1/-1!important;grid-template-columns:1fr}.range-grid{grid-template-columns:1fr 1fr}}
 @media (max-width:620px){.profile-grid,.range-grid{grid-template-columns:1fr}.profile-full{grid-column:1!important}.profile-full-routes{grid-template-columns:1fr}.proof .wrap{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 12px}.proof b{font-size:17px}}
+body.has-lens-focus .proof .focus-muted,body.has-lens-focus .method-card.focus-muted{opacity:1!important;filter:none!important}
+.lens-button[data-lens-toggle="hospitality"]{--focus:#92612f}
+.lens-button[data-lens-toggle="customer-success"]{--focus:#64518a}
+.lens-button[data-lens-toggle="hospitality"]:after{background:#ad793c}
+.lens-button[data-lens-toggle="customer-success"]:after{background:#7561a0}
+.lens-button.full-profile{border-radius:5px;border-width:1.5px;background:#e3d9ca;font-weight:750;padding-left:14px;padding-right:14px;margin-right:5px}
+.lens-button.full-profile:before{content:"▦";font-size:13px;margin-right:7px;vertical-align:-1px;color:#60584e}
+.lens-button.full-profile[aria-pressed="true"]:before{color:#f7f2e8}
+.lens-button.full-profile:after{background:#686158!important;opacity:.35!important}
+.lens-button.full-profile[aria-pressed="true"]:after{background:#f7f2e8!important;opacity:.7!important}
 </style>
 
 <style id="cosmology-bridge-demo">
@@ -336,7 +346,7 @@ section{padding-top:40px;padding-bottom:40px}
 .lens-button[data-lens-toggle="hospitality"]:after{background:linear-gradient(90deg,var(--u-red) 0 25%,var(--u-orange) 25% 50%,var(--u-yellow) 50% 75%,var(--u-violet) 75%)}
 .lens-button[data-lens-toggle="implementation"]:after{background:linear-gradient(90deg,var(--u-green) 0 25%,var(--u-violet) 25% 50%,var(--u-indigo) 50% 75%,var(--u-orange) 75%)}
 .lens-button[data-lens-toggle="customer-success"]:after{background:linear-gradient(90deg,var(--u-violet) 0 34%,var(--u-red) 34% 67%,var(--u-green) 67%)}
-.lens-button.full-profile:after{background:linear-gradient(90deg,var(--u-red) 0 12.5%,var(--u-orange) 12.5% 25%,var(--u-yellow) 25% 37.5%,var(--u-green) 37.5% 50%,var(--u-blue) 50% 62.5%,var(--u-indigo) 62.5% 75%,var(--u-violet) 75% 87.5%,var(--u-magenta) 87.5%)}
+.lens-button.full-profile:after{background:#777067;opacity:.34}
 
 .cosmos-translation{margin-top:14px;padding-top:12px;border-top:1px solid rgba(28,26,23,.13)}
 .cosmos-translation-label,.portal-spectrum-label{font:700 9px/1.2 system-ui,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:#756b5e}
@@ -547,7 +557,7 @@ section{padding-top:40px;padding-bottom:40px}
 <div class="herobody">
 <div class="herotext">
 <h1 class="thesis">I make complicated work make sense.</h1>
-<p class="herosub">I learn systems fast, spot the pattern underneath the noise, and get people aligned around what actually needs to happen — especially where customers, technology, operations, and implementation meet.</p>
+<p class="herosub">I find the root cause behind recurring problems, bring failing operations back to life, and build inventive, practical solutions that people can sustain. The result: stronger teams, trusted relationships, and better customer experiences.</p>
 <div class="cta">
 <a class="btn primary" href="#lenses">Choose a lens ↓</a>
 <a aria-label="Explore Walter Binger’s Living Map" class="universe-link" href="https://walterbinger.com/universe/#/sky" rel="noopener" target="_blank"><span class="star">✦</span> Explore the Living Map</a>
@@ -558,7 +568,7 @@ section{padding-top:40px;padding-bottom:40px}
 </div>
 </header>
 <nav class="jump">
-<div class="wrap"><a href="#do">Method</a><a href="#story">Story</a><a href="#pattern">Operating range</a><a href="#profiles">Profiles</a><a href="#explore">Built work</a><a href="#contact">Contact</a></div>
+<div class="wrap"><a href="#do">Method</a><a href="#pattern">Operating range</a><a href="#profiles">Profiles</a><a href="#explore">Built work</a><a href="#contact">Contact</a></div>
 </nav>
 <section aria-labelledby="top-lens-label" class="top-lenses" id="lenses">
 <div class="wrap">
@@ -596,44 +606,26 @@ section{padding-top:40px;padding-bottom:40px}
 <span class="focusable" data-lenses="operations implementation"><b>90%+</b> deficiency-free · ~32 surveys</span>
 <span class="focusable" data-lenses="operations implementation customer-success"><b>2</b> regulatory kitchen recoveries</span>
 <span class="focusable" data-lenses="operations customer-success"><b>5</b> cooks promoted to FSD</span>
-<span class="focusable" data-lenses="operations customer-success"><b>~70</b> residents safely relocated</span>
-<span class="focusable" data-lenses="hospitality customer-success"><b>Fluent Spanish</b> · conversational French</span>
+<span class="focusable" data-lenses="implementation customer-success operations"><b>Day-one</b> MealTracker go-lives &amp; adoption</span>
+<span class="focusable" data-lenses="operations hospitality implementation customer-success"><b>Fluent Spanish</b> · conversational French</span>
 </div>
 </div><section id="do">
 <div class="wrap">
 <h2 class="sec">How I work</h2>
 <div class="method-grid">
 <div class="method-card focusable" data-lenses="operations hospitality implementation customer-success">
-<h3>Pattern recognition</h3>
-<p>Find the repeating signal when the obvious explanation keeps failing.</p>
+<h3>Find the real problem</h3>
+<p>Trace symptoms back to root causes, then revive systems that have stopped serving their purpose.</p>
 </div>
 <div class="method-card focusable" data-lenses="operations implementation customer-success">
-<h3>Compliance &amp; readiness</h3>
-<p>Turn standards into routines people can follow before the survey, launch, or crisis arrives.</p>
+<h3>Build lasting capability</h3>
+<p>Develop confident, self-sustaining teams and create better processes—not just temporary fixes.</p>
 </div>
 <div class="method-card focusable" data-lenses="operations hospitality implementation customer-success">
-<h3>Communication &amp; translation</h3>
-<p>Keep the objective intact across different roles, vocabularies, cultures, and levels of authority.</p>
+<h3>Earn trust. Add value.</h3>
+<p>Listen, translate across people and disciplines, and use creativity to improve every customer experience.</p>
 </div>
 </div>
-</div>
-</section><section class="story" id="story">
-<div class="wrap">
-<h2 class="sec">A story that changed how I lead</h2>
-<div class="place">Deer Isle, Maine · 2020 to 2021</div>
-<div class="story-grid">
-<div class="chapter">
-<div class="chapter-no">Chapter one · COVID</div>
-<h3 class="kicker">Three weeks after I entered long-term care, COVID changed the job.</h3>
-<p>I was hired as the Food Service Director. When the outbreak hit, I stepped beyond the department and worked alongside the care team, including CNA duties, while keeping food service moving through 18-hour days and rapidly changing infection-control rules.</p>
-</div>
-<div class="chapter">
-<div class="chapter-no">Chapter two · Closure</div>
-<h3 class="kicker">About a year later, staffing — not COVID — closed the facility.</h3>
-<p>That was a separate problem: relocate roughly 70 residents safely, preserve critical information through the handoffs, and help the building close with dignity.</p>
-</div>
-</div>
-<p class="turn">The lesson I kept: systems have to adapt without losing the objective. Make the goal clear, the process flexible, and the communication strong enough that nothing important gets lost in translation.</p>
 </div>
 </section><section id="pattern">
 <div class="wrap">
