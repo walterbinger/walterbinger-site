@@ -332,6 +332,20 @@ body.has-lens-focus .proof .focus-muted,body.has-lens-focus .method-card.focus-m
 .lens-button.full-profile[aria-pressed="true"]:before{color:#f7f2e8}
 .lens-button.full-profile:after{background:#686158!important;opacity:.35!important}
 .lens-button.full-profile[aria-pressed="true"]:after{background:#f7f2e8!important;opacity:.7!important}
+
+/* Living Universe portal: rough pencil-map treatment, intentionally in progress. */
+.portal-stage{background:repeating-linear-gradient(0deg,transparent 0 27px,rgba(100,86,65,.048) 27.5px 28px),#f6eedf!important;isolation:isolate}
+.portal-stage:before{content:"";position:absolute;inset:18px 22px;border:2px dashed rgba(83,69,58,.34);border-radius:49% 46% 52% 47% / 48% 52% 45% 52%;transform:rotate(-2deg);pointer-events:none;z-index:0}
+.portal-lines{transform:rotate(-1.8deg) scale(.985)}
+.portal-lines path{stroke:#675849!important;stroke-width:2.3!important;stroke-linecap:round;stroke-dasharray:10 4 2 4;opacity:.7}
+.portal-lines circle{stroke:#785d88!important;stroke-width:3!important;stroke-dasharray:5 3;opacity:.65;fill:none!important}
+.portal-lens{filter:saturate(.72);transform:rotate(-4deg)}
+.portal-lens:nth-of-type(3n){transform:rotate(5deg)}
+.portal-lens i{border-style:dashed!important;border-width:2px!important;box-shadow:2px 2px 0 rgba(76,63,55,.12)}
+.portal-core{transform:rotate(-2deg);border-style:dashed!important;box-shadow:3px 4px 0 rgba(82,73,66,.11)}
+.portal-core b{font-family:"Comic Sans MS","Marker Felt","Bradley Hand","Iowan Old Style",serif;letter-spacing:.005em}
+.portal-overline{font-family:"Bradley Hand","Marker Felt","Comic Sans MS",cursive;letter-spacing:.08em;transform:rotate(-2deg)}
+.portal-stage:after{content:"a universe taking shape  ✎";position:absolute;right:19px;bottom:16px;font:italic 15px/1.2 "Bradley Hand","Marker Felt","Comic Sans MS",cursive;color:#786551;transform:rotate(-5deg);pointer-events:none}
 </style>
 
 <style id="cosmology-bridge-demo">
