@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "Portal Machine Assembly and Runtime Contract — Draft",
-  "revision": "0.1",
-  "status": "interface proposal; geometry values pending art approval",
+  "revision": "0.2",
+  "status": "complete named-port draft for physical and sonic modules; actual coordinates still pending 3D assembly",
   "units": {
     "assetWorld": "centimeters",
     "axes": "X right, Y up, Z toward viewer",
@@ -78,6 +78,10 @@
         {
           "id": "projector",
           "kind": "power"
+        },
+        {
+          "id": "resonator",
+          "kind": "power"
         }
       ]
     },
@@ -107,6 +111,14 @@
         },
         {
           "id": "snapshot",
+          "kind": "data"
+        },
+        {
+          "id": "resonator_drive",
+          "kind": "signal"
+        },
+        {
+          "id": "audio_waveframe",
           "kind": "data"
         }
       ]
@@ -188,6 +200,66 @@
           "kind": "control"
         }
       ]
+    },
+    {
+      "id": "resonator_core",
+      "status": "redesign_mechanical",
+      "ports": [
+        {
+          "id": "power",
+          "kind": "power"
+        },
+        {
+          "id": "input",
+          "kind": "signal"
+        },
+        {
+          "id": "tube_drive",
+          "kind": "signal"
+        }
+      ]
+    },
+    {
+      "id": "audio_engine",
+      "status": "specialist_review_required",
+      "ports": [
+        {
+          "id": "waveframe",
+          "kind": "data"
+        },
+        {
+          "id": "timbre",
+          "kind": "control"
+        },
+        {
+          "id": "register",
+          "kind": "control"
+        },
+        {
+          "id": "partials",
+          "kind": "signal"
+        }
+      ]
+    },
+    {
+      "id": "timbre_selector",
+      "status": "keep_interaction_candidate",
+      "ports": [
+        {
+          "id": "timbre",
+          "kind": "control"
+        }
+      ]
+    },
+    {
+      "id": "register_selector",
+      "status": "keep_interaction_candidate",
+      "ports": [
+        {
+          "id": "register",
+          "kind": "control"
+        }
+      ]
     }
   ],
   "connections": [
@@ -241,6 +313,41 @@
       "from": "transmit_control.trigger",
       "to": "transit_controller.activate",
       "kind": "control"
+    },
+    {
+      "from": "power_bus.resonator",
+      "to": "resonator_core.power",
+      "kind": "power"
+    },
+    {
+      "from": "signal_generator.resonator_drive",
+      "to": "resonator_core.input",
+      "kind": "signal"
+    },
+    {
+      "from": "resonator_core.tube_drive",
+      "to": "vacuum_tubes.signal",
+      "kind": "signal"
+    },
+    {
+      "from": "signal_generator.audio_waveframe",
+      "to": "audio_engine.waveframe",
+      "kind": "data"
+    },
+    {
+      "from": "timbre_selector.timbre",
+      "to": "audio_engine.timbre",
+      "kind": "control"
+    },
+    {
+      "from": "register_selector.register",
+      "to": "audio_engine.register",
+      "kind": "control"
+    },
+    {
+      "from": "harmonic_injectors.ratios",
+      "to": "audio_engine.partials",
+      "kind": "signal"
     }
   ],
   "runtimeSchema": {
