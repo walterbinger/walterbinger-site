@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Unnamed Portal Apparatus — Shared Runtime State",
+  "description": "Engineering boundary contract. Audio renderer and cymatic geometry must consume identical canonical InstrumentState and derived WaveFrame, not separate representations. JSON describes persistent metadata; typed arrays may be transferred by reference in runtime.",
+  "type": "object",
+  "required": [
+    "powered",
+    "x",
+    "y",
+    "frequencyHz",
+    "phaseRadians",
+    "timbre",
+    "register",
+    "activePartialIds",
+    "audioMuted",
+    "captures",
+    "transport"
+  ],
+  "properties": {
+    "powered": {
+      "type": "boolean"
+    },
+    "x": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Continuous joystick X position. Resolver computes frequencyHz."
+    },
+    "y": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1,
+      "description": "Continuous joystick Y position. Resolver computes relative exciter phase."
+    },
+    "frequencyHz": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "phaseRadians": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 6.283185307179586
+    },
+    "timbre": {
+      "type": "string",
+      "enum": [
+        "velvet_keys",
+        "glass",
+        "tube_organ",
+        "marimba"
+      ]
+    },
+    "register": {
+      "type": "string",
+      "enum": [
+        "low",
+        "mid",
+        "high"
+      ]
+    },
+    "activePartialIds": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "root",
+          "third",
+          "fifth",
+          "octave",
+          "seventh",
+          "sub"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "audioMuted": {
+      "type": "boolean"
+    },
+    "captures": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "$ref": "#/$defs/CapturedState"
+      }
+    },
+    "transport": {
+      "type": "string",
+      "enum": [
+        "idle",
+        "starting",
+        "transmitting"
+      ]
+    }
+  },
+  "$defs": {
+    "CapturedState": {
+      "type": "object",
+      "required": [
+        "id",
+        "frequencyHz",
+        "phaseRadians",
+        "timbre",
+        "register",
+        "activePartialIds",
+        "fieldHash",
+        "renderSeed"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "frequencyHz": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "phaseRadians": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 6.283185307179586
+        },
+        "timbre": {
+          "type": "string"
+        },
+        "register": {
+          "type": "string"
+        },
+        "activePartialIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "fieldHash": {
+          "type": "string",
+          "description": "Hash of actual saved numeric WaveFrame; actual amplitudeGrid stored as Float32Array/binary asset in runtime."
+        },
+        "renderSeed": {
+          "type": "integer"
+        },
+        "motion": {
+          "type": "object",
+          "description": "Artistic time dimension; derived from real captured state, not a canned preset."
+        }
+      }
+    }
+  }
+}
