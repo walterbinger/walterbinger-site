@@ -1723,7 +1723,7 @@ function physics(){
  const idx=j*GW+i;complexReal[idx]=re;complexImag[idx]=im;const amp=Math.sqrt(re*re+im*im);grid[idx]=amp;if(amp>largest)largest=amp;
  }}
  const inv=1/largest;for(let i=0;i<grid.length;i++)grid[i]=Math.min(1,grid[i]*inv);
- fieldPeak=largest;lastPeak=Math.min(1,Math.log1p(largest)*.24);
+ fieldPeak=largest;lastPeak=Math.min(1,Math.log1p(largest)*.24);updateSound();
  }
 function fieldAt(u,v,data=grid){
  const xx=Math.max(0,Math.min(GW-1.001,u*(GW-1))),yy=Math.max(0,Math.min(GH-1.001,v*(GH-1)));
@@ -1732,10 +1732,11 @@ function fieldAt(u,v,data=grid){
 }
 function codeChord(){
  if(locks.length<3)return {name:'ASSEMBLING',consonant:0};
+ if(locks.some(z=>z.cents>32))return {name:'UNTUNED CLUSTER',consonant:.12};
  const pitches=locks.map(z=>z.note),distinct=[...new Set(pitches.map(n=>(n%12+12)%12))];
  if(distinct.length!==3)return {name:'UNISON CLUSTER',consonant:.15};
  const table={'0,4,7':['MAJOR',1],'0,3,7':['MINOR',.94],'0,2,7':['SUS2',.79],'0,5,7':['SUS4',.79],'0,3,6':['DIMINISHED',.58],'0,4,8':['AUGMENTED',.61]};
- for(let r of distinct){const key=distinct.map(n=>(n-r+12)%12).sort((a,b)=>a-b).join(',');if(table[key])return {name:names[r]+' '+table[key][0],consonant:table[key][1]}}
+ for(let r of distinct){const key=distinct.map(n=>(n-r+12)%12).sort((a,b)=>a-b).join(',');if(table[key]){const tuningPenalty=locks.reduce((sum,z)=>sum+z.cents,0)/3/135;return {name:names[r]+' '+table[key][0],consonant:table[key][1]*Math.max(.7,1-tuningPenalty)}}}
  return {name:'EXPERIMENTAL CLUSTER',consonant:.25};
 }
 function chordLevel(){return locks.length<3?0:codeChord().consonant}
