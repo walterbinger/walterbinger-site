@@ -1,0 +1,286 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Portal Machine Assembly and Runtime Contract — Draft",
+  "revision": "0.1",
+  "status": "interface proposal; geometry values pending art approval",
+  "units": {
+    "assetWorld": "centimeters",
+    "axes": "X right, Y up, Z toward viewer",
+    "stage": "camera-fitted within portal threshold; layout scales from master camera, not ad hoc element offsets",
+    "positions": "unset means to be supplied by art/3D lead; do not invent"
+  },
+  "components": [
+    {
+      "id": "curtain_and_cord",
+      "status": "keep_reference_v6",
+      "ports": [
+        {
+          "id": "release_latch",
+          "kind": "mechanical"
+        }
+      ]
+    },
+    {
+      "id": "chassis",
+      "status": "redesign",
+      "ports": [
+        {
+          "id": "main_switch_mount",
+          "kind": "mechanical"
+        },
+        {
+          "id": "generator_mount",
+          "kind": "mechanical"
+        },
+        {
+          "id": "projector_mount",
+          "kind": "mechanical"
+        }
+      ]
+    },
+    {
+      "id": "main_switch",
+      "status": "redesign_requires_geometry_approval",
+      "motion": {
+        "axis": "local hinge X (3D up/down throw)",
+        "from": "OFF raised",
+        "to": "ON lowered into contacts",
+        "pivot_xyz_cm": null,
+        "travel_degrees": null
+      },
+      "ports": [
+        {
+          "id": "output",
+          "kind": "power"
+        },
+        {
+          "id": "hinge",
+          "kind": "mechanical"
+        }
+      ]
+    },
+    {
+      "id": "power_bus",
+      "status": "requires_detail",
+      "ports": [
+        {
+          "id": "input",
+          "kind": "power"
+        },
+        {
+          "id": "generator",
+          "kind": "power"
+        },
+        {
+          "id": "tubes",
+          "kind": "power"
+        },
+        {
+          "id": "projector",
+          "kind": "power"
+        }
+      ]
+    },
+    {
+      "id": "signal_generator",
+      "status": "reuse_numeric_engine_refactor",
+      "ports": [
+        {
+          "id": "power",
+          "kind": "power"
+        },
+        {
+          "id": "exciter_a",
+          "kind": "signal"
+        },
+        {
+          "id": "exciter_b",
+          "kind": "signal"
+        },
+        {
+          "id": "partials",
+          "kind": "signal"
+        },
+        {
+          "id": "wavefield",
+          "kind": "data"
+        },
+        {
+          "id": "snapshot",
+          "kind": "data"
+        }
+      ]
+    },
+    {
+      "id": "vacuum_tubes",
+      "status": "redesign_visual",
+      "ports": [
+        {
+          "id": "power",
+          "kind": "power"
+        },
+        {
+          "id": "signal",
+          "kind": "signal"
+        }
+      ]
+    },
+    {
+      "id": "cymatic_projector",
+      "status": "redesign_visual",
+      "ports": [
+        {
+          "id": "power",
+          "kind": "power"
+        },
+        {
+          "id": "field",
+          "kind": "data"
+        }
+      ]
+    },
+    {
+      "id": "joystick_xy",
+      "status": "keep_interaction_candidate",
+      "ports": [
+        {
+          "id": "xy",
+          "kind": "signal"
+        }
+      ]
+    },
+    {
+      "id": "harmonic_injectors",
+      "status": "keep_interaction_candidate",
+      "ports": [
+        {
+          "id": "ratios",
+          "kind": "signal"
+        }
+      ]
+    },
+    {
+      "id": "capture_bank",
+      "status": "keep_interaction_candidate",
+      "ports": [
+        {
+          "id": "states",
+          "kind": "data"
+        }
+      ]
+    },
+    {
+      "id": "transmit_control",
+      "status": "keep_deliberate_press",
+      "ports": [
+        {
+          "id": "trigger",
+          "kind": "control"
+        }
+      ]
+    },
+    {
+      "id": "transit_controller",
+      "status": "reuse_transit",
+      "ports": [
+        {
+          "id": "activate",
+          "kind": "control"
+        }
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "from": "main_switch.output",
+      "to": "power_bus.input",
+      "kind": "power",
+      "route": "visible terminators required"
+    },
+    {
+      "from": "power_bus.generator",
+      "to": "signal_generator.power",
+      "kind": "power"
+    },
+    {
+      "from": "power_bus.tubes",
+      "to": "vacuum_tubes.power",
+      "kind": "power"
+    },
+    {
+      "from": "power_bus.projector",
+      "to": "cymatic_projector.power",
+      "kind": "power"
+    },
+    {
+      "from": "joystick_xy.xy",
+      "to": "signal_generator.exciter_a",
+      "kind": "signal"
+    },
+    {
+      "from": "joystick_xy.xy",
+      "to": "signal_generator.exciter_b",
+      "kind": "signal"
+    },
+    {
+      "from": "harmonic_injectors.ratios",
+      "to": "signal_generator.partials",
+      "kind": "signal"
+    },
+    {
+      "from": "signal_generator.wavefield",
+      "to": "cymatic_projector.field",
+      "kind": "data"
+    },
+    {
+      "from": "signal_generator.snapshot",
+      "to": "capture_bank.states",
+      "kind": "data"
+    },
+    {
+      "from": "transmit_control.trigger",
+      "to": "transit_controller.activate",
+      "kind": "control"
+    }
+  ],
+  "runtimeSchema": {
+    "InstrumentState": [
+      "powered",
+      "x",
+      "y",
+      "frequencyHz",
+      "relativePhaseRad",
+      "timbre",
+      "register",
+      "activeHarmonicRatios",
+      "capturedStates",
+      "muted",
+      "transmitState"
+    ],
+    "WaveFrame": [
+      "timestamp",
+      "complexModeCoefficients",
+      "amplitudeGrid",
+      "nodalContours",
+      "resonanceStrength"
+    ],
+    "CapturedState": [
+      "id",
+      "timestamp",
+      "frequencyHz",
+      "relativePhaseRad",
+      "timbre",
+      "register",
+      "activeHarmonicRatios",
+      "amplitudeGrid",
+      "visualPose",
+      "palette"
+    ]
+  },
+  "nonfunctional": {
+    "audio": "gesture-activated, muted/hidden state, capped master output",
+    "motion": "prefers-reduced-motion handling",
+    "layout": "390px mobile and wide desktop; visible bypass",
+    "userApprovalRequiredForPublish": true
+  }
+}
