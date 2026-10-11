@@ -1,5 +1,7 @@
 # AI Delegation Roster — Portal Machine
-Current recommendation: 2026-10-10 | Applies to master playbook v1.0 and non-live branch portal-machine-production-system-20261010
+Current recommendation: revised 2026-10-11 | Applies to master playbook v1.0 and non-live branch portal-machine-production-system-20261010
+
+> **ART PIPELINE CORRECTION — 11 October 2026:** After two image-generation studies, including one prompted with screenshots of the actual working switch, the model changed the number/orientation of copper blade arms and invented a diagonal crossing linkage. Treat these as explicit **REJECTED MECHANICAL GEOMETRY** examples. **No further whole-switch image-to-image redraws.** First image is a reference for copper, iron, Bakelite, aged-paper illustration and patina only; second is evidence of geometry drift. Freeze engineering geometry in procedural SVG/Blender/mesh, rig one common hinge and check OFF/ON with exactly two heavy cables. Gemini/Nano Banana may generate isolated material textures, engraving motifs, patina treatments, lighting concepts and backgrounds; apply them to frozen material slots without altering the silhouette or adding parts. A technical reviewer must compare actual 3D meshes/coordinates rather than trusting an illustrative multiview sheet. This correction supersedes older instructions inviting Nano Banana to redraw full switch geometry.
 
 ## Core rule
 One creative owner (Walter), one canonical design contract (Scout), one integration repository (Codex/GitHub), and deliberately *competing* specialist outputs where comparison is worthwhile. A fantastic-looking render is evidence of aesthetic direction, not functioning geometry. Keep all source/editable assets.
