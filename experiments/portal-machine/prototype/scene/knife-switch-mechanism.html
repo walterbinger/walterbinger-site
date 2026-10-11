@@ -108,8 +108,8 @@ function drawStatic(){
   [[[1.54,-.90,.58],[2.12,-1.22,.49],[2.81,-1.45,.38],[3.55,-1.70,.21]],'OUTGOING']]){
     const points=coords.map(v=>P(...v));
     const d='M'+str(points[0])+' C '+str(points[1])+' '+str(points[2])+' '+str(points[3]);
-    make(wires,'path',{d,fill:'none',stroke:'#161c1c','stroke-width':29,'stroke-linecap':'round',filter:'url(#shadow)'});
-    make(wires,'path',{d,fill:'none',stroke:'#48504a','stroke-width':23,'stroke-linecap':'round'});
+    make(wires,'path',{d,fill:'none',stroke:'#161c1c','stroke-width':39,'stroke-linecap':'round',filter:'url(#shadow)'});
+    make(wires,'path',{d,fill:'none',stroke:'#48504a','stroke-width':32,'stroke-linecap':'round'});
     make(wires,'path',{d,fill:'none',stroke:'#c8ba94','stroke-width':1.6,'stroke-dasharray':'2 6',opacity:.65});
     make(wires,'path',{d,fill:'none',stroke:'#0d1315','stroke-width':4,'stroke-dasharray':'2 7',opacity:.53});
   }
@@ -153,8 +153,7 @@ function drawStatic(){
   text(anno,'IN',inL[0]-26,inL[1]+32,{'font-family':'monospace','font-size':15,'font-weight':700,fill:'#4a3f31'});
   text(anno,'OUT',outL[0]+27,outL[1]+40,{'font-family':'monospace','font-size':15,'font-weight':700,fill:'#4a3f31'});
   // Lower callout under blade station
-  text(anno,'TWO COPPER BLADES',348,607,{'font-family':'Georgia,serif','font-size':15,'font-style':'italic',fill:'#6a553b'});
-  text(anno,'ONE INPUT → ONE OUTPUT',330,633,{'font-family':'monospace','font-size':11,'letter-spacing':'2',fill:'#776149'});
+  
   // An OFF/ON arc is geometry derived from the actual tip path rather than free illustration
   const r=span,pointFor=a=>P(.78,rearY-r*Math.cos(a*PI/180),pivotZ+r*Math.sin(a*PI/180));
   let d='';for(let a=0;a<=68;a+=3){d+=(a?'L':'M')+str(pointFor(a))+' '}
@@ -235,18 +234,22 @@ function clunk(closed){
     osc.connect(filter).connect(gain).connect(audioCtx.destination);osc.start(t+i*.055);osc.stop(t+i*.055+.18);}
  }catch(e){}
 }
-let raf=0,previous=0;
+let raf=0,finishTimer=null;
 function setAngle(v,emit=false){const t=Math.max(0,Math.min(68,Number(v)));targetAngle=t;
  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){angle=t;drawBlade(angle);if(emit)clunk(angle<2);return}
- cancelAnimationFrame(raf);
+ cancelAnimationFrame(raf);clearTimeout(finishTimer);
  const start=angle,dt=performance.now(),duration=650;
- function tick(now){const p=Math.min(1,(now-dt)/duration),ease=1-Math.pow(1-p,4);
-  angle=start+(targetAngle-start)*ease;drawBlade(angle);if(p<1)raf=requestAnimationFrame(tick);else{angle=targetAngle;drawBlade(angle);if(emit)clunk(angle<2)}
+ let finished=false;
+ function finish(){if(finished)return;finished=true;cancelAnimationFrame(raf);clearTimeout(finishTimer);angle=targetAngle;drawBlade(angle);if(emit)clunk(angle<2)}
+ function tick(now){if(finished)return;const p=Math.min(1,(now-dt)/duration),ease=1-Math.pow(1-p,4);
+  angle=start+(targetAngle-start)*ease;drawBlade(angle);if(p<1)raf=requestAnimationFrame(tick);else finish();
  }raf=requestAnimationFrame(tick);
+ // The contact cannot remain half-thrown after background-tab throttling.
+ finishTimer=setTimeout(finish,duration+90);
 }
 const off=document.querySelector('#off'),on=document.querySelector('#on'),range=document.querySelector('#range');
 off.addEventListener('click',()=>setAngle(68,true));on.addEventListener('click',()=>setAngle(0,true));
-range.addEventListener('input',()=>{cancelAnimationFrame(raf);targetAngle=angle=Number(range.value);drawBlade(angle)});
+range.addEventListener('input',()=>{cancelAnimationFrame(raf);clearTimeout(finishTimer);targetAngle=angle=Number(range.value);drawBlade(angle)});
 svg.addEventListener('click',()=>setAngle(angle>5?0:68,true));
 svg.addEventListener('keydown',e=>{if(['Enter',' '].includes(e.key)){e.preventDefault();setAngle(angle>5?0:68,true)}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden)audioCtx?.suspend()});
