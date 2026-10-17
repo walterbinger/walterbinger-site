@@ -69,8 +69,9 @@
     box.textContent='☄️ Oort Cloud Archive · You are viewing the 2026 family itinerary. The comet returns to prominence every October; the next festival schedule has not yet been published. Archived choices are not current reservations.';
     // Don't imply the old schedule or attendance selections are a bookable current year.
     document.querySelectorAll('[data-choice]').forEach(btn=>{btn.disabled=true;btn.setAttribute('title','2026 archive — selections closed');});
-    const observer=new MutationObserver(()=>document.querySelectorAll('[data-choice]').forEach(btn=>{btn.disabled=true;}));
-    observer.observe(document.body,{subtree:true,attributes:true,attributeFilter:['disabled']});
+    const controls=document.querySelector('.control');
+    if(controls){controls.style.pointerEvents='none';controls.style.opacity='.55';}
+    document.querySelectorAll('[data-choice]').forEach(btn=>btn.setAttribute('aria-disabled','true'));
   }else if(month==='October' && year===festivalYear){
     box.style.display='block';
     box.textContent='☄️ Inbound! The Park City Comet is bright this October. This is a working family plan; always reserve festival tickets and reception RSVPs separately.';
