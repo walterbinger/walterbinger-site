@@ -5,6 +5,7 @@ import { DeveloperInspector } from "./components/DeveloperInspector";
 import { GratitudeSequence } from "./components/GratitudeSequence";
 import { LivingMapScene } from "./components/LivingMapScene";
 import { SnowGlobeScene } from "./components/SnowGlobeScene";
+import { SeasonalComet } from "./components/SeasonalComet";
 import {
   hasEveryLens,
   hydrateRouteFromHash,
@@ -62,6 +63,7 @@ export default function App() {
         {mode === "convergence" && <GratitudeSequence key="convergence" />}
         {mode === "snow-globe" && <SnowGlobeScene key="snow-globe" />}
       </AnimatePresence>
+      {mode === "sky" && <SeasonalComet />}
       <DeveloperInspector />
     </>
   );
