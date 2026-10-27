@@ -63,6 +63,7 @@ export default function App() {
         {mode === "snow-globe" && <SnowGlobeScene key="snow-globe" />}
       </AnimatePresence>
       <DeveloperInspector />
+      <a href="/privacy.html" className="analytics-privacy-link">Privacy &amp; analytics</a>
     </>
   );
 }

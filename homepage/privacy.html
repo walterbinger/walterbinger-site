@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Privacy &amp; analytics — Living Universe</title>
+<style>
+:root {font-family:"Iowan Old Style",Georgia,serif;color:#28231e;background:#f7f2e8}
+body{margin:0;padding:3rem 1.3rem;line-height:1.65}
+main{max-width:720px;margin:auto} h1{font-size:2rem;line-height:1.2}h2{font-size:1.25rem;margin-top:2rem}
+button{padding:.7rem 1rem;border:1px solid #554c42;background:#fff9eb;color:inherit;cursor:pointer;border-radius:4px;margin:.3rem .3rem .3rem 0}
+button:focus-visible,a:focus-visible{outline:2px solid #335c7d;outline-offset:3px}
+a{color:inherit}p{max-width:70ch}#status{font-weight:700}
+</style>
+<script defer src="/analytics.js" data-site-analytics="v1"></script>
+</head>
+<body>
+<main>
+<a href="/">← Back to the site</a>
+<h1>Privacy &amp; analytics</h1>
+<p>I use analytics to learn which pages visitors explore, what works, and what needs repair. The public Living Universe can be explored without signing in.</p>
+<p>By default, the site counts anonymous pageviews and specifically labeled interactions without saving a browser identifier between visits. You can opt into recognizing this browser on return, or stop analytics entirely, below. This may not perfectly distinguish individual people or devices.</p>
+<p>PostHog may receive technical browser/device information and infer approximate location. Session replay, broad automatic click capture, and collection of form contents are disabled. We do not intentionally send family schedules, addresses, private itinerary details, messages, or saved exploration files to analytics. A site's analytics provider may process connection IPs; these choices do not guarantee total anonymity.</p>
+<h2>Your controls</h2>
+<p id="status" role="status">Reading your preference…</p>
+<button type="button" id="turn-off">Stop analytics on this browser</button>
+<button type="button" id="turn-on">Allow anonymous analytics</button>
+<button type="button" id="remember-on">Recognize this browser on return</button>
+<button type="button" id="remember-off">Do not remember this browser between visits</button>
+<p>Preferences are stored only in this browser. Clearing browser data may reset them. For data deletion inquiries, use the contact information on the homepage. Read <a href="https://posthog.com/privacy" rel="noopener">PostHog's privacy information</a>.</p>
+<h2>Family comet</h2>
+<p>In a future family-only sign-in experience, relatives will be able to choose whether their verified account has a recognizable display name in private site analytics. Public visitors cannot be reliably identified by IP or neighborhood. Itinerary access must be protected by authentication and authorization, separate from tracking.</p>
+<script>
+(function(){
+ var disabledKey="wb_analytics_disabled_v1", rememberKey="wb_analytics_remember_v1";
+ function get(key){try{return localStorage.getItem(key)==="yes"}catch(e){return false}}
+ function set(key,val){try{localStorage.setItem(key,val?"yes":"no")}catch(e){}}
+ function render(){
+  document.getElementById("status").textContent=(get(disabledKey)?"Analytics are off.":"Anonymous analytics are on.")+" "+(get(rememberKey)?"Return recognition enabled.":"No cross-visit identity is saved.");
+ }
+ document.getElementById("turn-off").onclick=function(){set(disabledKey,true);location.reload()};
+ document.getElementById("turn-on").onclick=function(){set(disabledKey,false);location.reload()};
+ document.getElementById("remember-on").onclick=function(){set(rememberKey,true);location.reload()};
+ document.getElementById("remember-off").onclick=function(){set(rememberKey,false);location.reload()};
+ render();
+})();
+</script>
+</main>
+</body>
+</html>

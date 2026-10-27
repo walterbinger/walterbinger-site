@@ -81,6 +81,14 @@ interface UniverseState {
   toggleDebug: () => void;
 }
 
+function trackUniverse(event: string, properties: Record<string, string>): void {
+  if (typeof window === "undefined") return;
+  const analytics = (window as Window & {
+    wbAnalytics?: { track: (name: string, props: Record<string, string>) => void };
+  }).wbAnalytics;
+  analytics?.track(event, properties);
+}
+
 function navigateHash(path: string): void {
   if (typeof window === "undefined") {
     return;
@@ -113,6 +121,7 @@ export const useUniverseStore = create<UniverseState>((set, get) => ({
   },
   enterWorld: (id) => {
     navigateHash(`/world/${id}`);
+    trackUniverse("universe_world_entered", { world_id: id });
     set((state) => ({
       mode: "world",
       activeLensIds:

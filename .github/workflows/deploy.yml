@@ -42,6 +42,9 @@ jobs:
       - name: Build living map beneath approved homepage
         run: pnpm run build
 
+      - name: Block publishing if analytics were omitted
+        run: pnpm run verify:analytics
+
       - name: Upload approved homepage and living map
         uses: actions/upload-pages-artifact@v3
         with:

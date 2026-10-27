@@ -2436,3 +2436,6 @@ a:focus-visible,
     drop-shadow(0 0 2px color-mix(in srgb,var(--body-color) 30%,transparent))
     drop-shadow(0 5px 10px rgba(35,32,27,.18));
 }
+/* Subtle, always-accessible privacy controls. */
+.analytics-privacy-link { position: fixed; bottom: .8rem; right: .85rem; z-index: 100; padding: .28rem .5rem; border-radius: 4px; font: 11px/1.4 system-ui, sans-serif; color: #423c32; background: rgba(247, 242, 232, .85); text-decoration: none; }
+.analytics-privacy-link:focus-visible { outline: 2px solid currentColor; }

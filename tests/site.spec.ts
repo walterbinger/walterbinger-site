@@ -19,10 +19,11 @@ test("professional doorway opens the source-linked PREP world", async ({
   await expect(
     page.getByRole("img", { name: "Walter Binger", exact: true }).first(),
   ).toBeVisible();
-  await page
-    .getByRole("link", { name: "A larger project is taking shape" })
-    .click();
-
+  // The published homepage opens the map in a new tab. Check its destination,
+  // then navigate to it in this page for the remaining route tests.
+  await expect(page.getByRole("link", { name: "Explore Walter Binger’s Living Map" }))
+    .toHaveAttribute("href", /\/universe\/#\/sky$/);
+  await page.goto("/universe/#/sky");
   await expect(page).toHaveURL(/\/universe\/#\/sky$/);
   await page
     .getByRole("button", {
@@ -38,16 +39,11 @@ test("professional doorway opens the source-linked PREP world", async ({
       exact: true,
     }),
   ).toBeVisible();
-  await expect(
-    page.getByRole("link", {
-      name: "PREP Beta 1.0 — Complete Field Kit",
-      exact: true,
-    }),
-  ).toHaveAttribute(
-    "href",
-    "https://docs.google.com/document/d/1d6e135C203qSSBP1gL6vJCGL4j3gItdRGcOuE9wJ1ok/edit",
-  );
-  await expect(page.locator(".world-resources a")).toHaveCount(5);
+  await expect(page.getByRole("link", { name: "PREP 3.0 Alpha" }))
+    .toHaveAttribute("href", "/universe/field-tools/prep-3.0-alpha.html");
+  await expect(page.getByRole("link", { name: "PERP 1.3 Alpha" }))
+    .toHaveAttribute("href", "/universe/field-tools/perp-1.3-alpha.html");
+  await expect(page.locator(".world-resources a")).toHaveCount(2);
 });
 
 test("lenses redraw relationships and a world can be entered", async ({
